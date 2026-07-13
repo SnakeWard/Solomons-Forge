@@ -1,0 +1,199 @@
+{
+  "$schema_note": "Forge Lexicon v1.0.0 — canonical mapping from internal (lineage) vocabulary to public-surface vocabulary. Consumed by: translation passes, term-leak linter, lineage document. This file is itself a public artifact; it contains no secrets, only naming policy.",
+  "lexicon_version": "1.0.1",
+  "status": "locked",
+  "locked_by_pass": "PASS_0_LEXICON_LOCK",
+  "brand": {
+    "public_name": "Forge",
+    "internal_lineage_name": "Solomon's Forge / Solomon's Key",
+    "policy": "The public brand is 'Forge'. The full lineage name appears only in the internal lineage document (LINEAGE.md) and never on the public surface (README, specs, code identifiers, published docs, commit messages on the public repo).",
+    "rationale": "Evocative brands are industry-normal (Terraform, Vault, SourceForge). Mythological modifiers read as lore rather than tooling and are retired from the public surface."
+  },
+  "scopes": {
+    "public_surface": "README, specification documents, public repo code identifiers, API names, CLI output, published posts, issue templates, commit messages on public repo",
+    "internal_only": "Lineage document, private build notes, pass reports on the private side, conversation shorthand"
+  },
+  "entries": [
+    {
+      "internal_term": "Solomon's Forge",
+      "public_term": "Forge",
+      "status": "translate",
+      "category": "brand",
+      "linter_patterns": ["\\bSolomon'?s?\\b"],
+      "notes": "Pattern intentionally catches any 'Solomon' variant on the public surface."
+    },
+    {
+      "internal_term": "Solomon's Key",
+      "public_term": "Forge protocol specification",
+      "status": "translate",
+      "category": "brand",
+      "linter_patterns": [],
+      "notes": "Covered by the Solomon pattern above. The finished protocol language is publicly 'the Forge protocol'."
+    },
+    {
+      "internal_term": "KEY file (Kernel Evolving YAML)",
+      "public_term": "protocol manifest",
+      "status": "translate",
+      "category": "artifact",
+      "linter_patterns": ["\\bKEY file\\b", "\\bKernel Evolving YAML\\b", "\\.key\\.yaml\\b"],
+      "notes": "Industry-standard term for a declarative file a runtime validates and executes. File naming convention on public surface: *.manifest.yaml. Bare word 'key' is NOT linted (too common); only the compound forms are."
+    },
+    {
+      "internal_term": "Logic Engine",
+      "public_term": "governed runtime",
+      "status": "translate",
+      "category": "component",
+      "linter_patterns": ["\\bLogic Engine\\b"],
+      "notes": "Describes function rather than asserting it. 'Runtime' alone is acceptable where context is unambiguous."
+    },
+    {
+      "internal_term": "Hollow",
+      "public_term": "sealed tool",
+      "status": "translate",
+      "category": "component",
+      "linter_patterns": ["\\bHollow\\b", "\\bhollow server\\b", "\\bHollows\\b"],
+      "notes": "HIGHEST-PRIORITY translation; most lore-dependent term. Long form where precision matters: 'deterministic tool contract'. Code identifiers: sealedTool / SealedTool. Existing identifiers like hollowDispatcher become toolDispatcher on the public surface."
+    },
+    {
+      "internal_term": "Hollow Server",
+      "public_term": "local execution shim",
+      "status": "translate",
+      "category": "component",
+      "linter_patterns": [],
+      "notes": "Covered by Hollow patterns above. Where the concept means 'simulated backend proving a workflow locally', 'local execution shim' or 'simulated service layer' are both acceptable."
+    },
+    {
+      "internal_term": "Pass",
+      "public_term": "pass",
+      "status": "keep",
+      "category": "process",
+      "linter_patterns": [],
+      "notes": "Standard compiler vocabulary for sixty years. Usage is already correct."
+    },
+    {
+      "internal_term": "Gate",
+      "public_term": "gate",
+      "status": "keep",
+      "category": "process",
+      "linter_patterns": [],
+      "notes": "CI/CD-native term (quality gate, policy gate). Fail-closed semantics stated explicitly in specs."
+    },
+    {
+      "internal_term": "Doctrine",
+      "public_term": "core invariants",
+      "status": "translate",
+      "category": "concept",
+      "linter_patterns": ["\\bdoctrine\\b", "\\bDoctrine\\b"],
+      "notes": "'Invariant' = a property that must hold at all times. Carries the exact meaning with engineering weight. 'Doctrine lock' becomes 'invariant lock'."
+    },
+    {
+      "internal_term": "Ledger",
+      "public_term": "attestation log",
+      "status": "translate",
+      "category": "artifact",
+      "linter_patterns": ["\\bledger\\b", "\\bLedger\\b"],
+      "notes": "Deliberately aligned with in-toto/SLSA vocabulary. Retains append-only, PROV-O-mapped semantics; the name change is strategic alignment, not redesign."
+    },
+    {
+      "internal_term": "L.O.T. (Logic Orchestration Table)",
+      "public_term": "routing table",
+      "status": "translate",
+      "category": "component",
+      "linter_patterns": ["\\bL\\.O\\.T\\.", "\\bLogic Orchestration Table\\b", "\\bLOT route\\b"],
+      "notes": "Zero-translation-burden standard term. 'LOT route' becomes 'route'."
+    },
+    {
+      "internal_term": "Trust tiers T0-T4",
+      "public_term": "verification levels VL0-VL4",
+      "status": "translate",
+      "category": "concept",
+      "linter_patterns": ["\\bT[0-4]\\b(?=.*trust)", "\\btrust tier\\b", "\\btrust-tier\\b"],
+      "notes": "'Verification level' is self-describing and echoes SLSA levels. The T0-T4 pattern is context-guarded to avoid false positives; linter implementation may simplify to flagging 'trust tier' phrases only."
+    },
+    {
+      "internal_term": "Verified Return Path (VRP)",
+      "public_term": "Verified Return Path (VRP)",
+      "status": "keep",
+      "category": "component",
+      "linter_patterns": [],
+      "notes": "Already reads as professional engineering vocabulary. Keep as the flagship named mechanism."
+    },
+    {
+      "internal_term": "Anti-Slop Reviewer",
+      "public_term": "output review gate",
+      "status": "translate",
+      "category": "process",
+      "linter_patterns": ["\\bslop\\b", "\\bSlop\\b", "\\bAnti-Slop\\b"],
+      "notes": "'Slop' is drifting mainstream but is not enterprise-safe. In prose, 'low-quality output' or 'defect' replaces 'slop'."
+    },
+    {
+      "internal_term": "Witness (the ledger serves as the witness)",
+      "public_term": "(retired — plain English)",
+      "status": "retire",
+      "category": "concept",
+      "linter_patterns": ["\\bwitness\\b", "\\bWitness\\b"],
+      "notes": "Public phrasing: 'the log attests'. Retired at the surface, preserved in lineage."
+    },
+    {
+      "internal_term": "Judge (tests serve as the judge)",
+      "public_term": "(retired — plain English)",
+      "status": "retire",
+      "category": "concept",
+      "linter_patterns": ["\\bthe judge\\b"],
+      "notes": "Public phrasing: 'tests validate'. Pattern is narrow ('the judge') to avoid false positives on ordinary uses of 'judge'."
+    },
+    {
+      "internal_term": "No fake completion",
+      "public_term": "completion verification",
+      "status": "keep_informal_translate_formal",
+      "category": "concept",
+      "linter_patterns": [],
+      "notes": "The plain-English rule 'no fake completion' is kept in informal prose because it lands hard. Formal spec sections use 'completion verification'. Not linted."
+    },
+    {
+      "internal_term": "real / simulated / planned / unknown labels",
+      "public_term": "real / simulated / planned / unknown labels",
+      "status": "keep",
+      "category": "concept",
+      "linter_patterns": [],
+      "notes": "Already plain English. Survives untouched. This labeling scheme is a flagship export."
+    },
+    {
+      "internal_term": "Handoff",
+      "public_term": "handoff",
+      "status": "keep",
+      "category": "process",
+      "linter_patterns": [],
+      "notes": "Standard industry term. The handoff contract is the first public deliverable."
+    },
+    {
+      "internal_term": "Placeholder Detector Hollow",
+      "public_term": "placeholder detection tool",
+      "status": "translate",
+      "category": "component",
+      "linter_patterns": [],
+      "notes": "Covered by Hollow patterns. Publicly: 'placeholder detection' as capability, 'placeholder detector' as component."
+    },
+    {
+      "internal_term": "Caleb / Caleb AI",
+      "public_term": "(internal project name — not on public surface in v1)",
+      "status": "internal_only",
+      "category": "brand",
+      "linter_patterns": ["\\bCaleb\\b"],
+      "notes": "The orchestration system remains private in v1. The public repo covers the Forge framework only. Revisit when/if the runtime is published."
+    }
+  ],
+  "linter_policy": {
+    "applies_to_scope": "public_surface",
+    "file_globs": ["README*", ".github/**", "docs/**", "spec/**", "src/**", "*.md", "package.json"],
+    "excluded_paths": ["LINEAGE.md", "lexicon.json", "internal/**"],
+    "match_mode": "regex, word-boundary, case-sensitive as written per pattern",
+    "on_hit": "fail CI with file, line, matched pattern, and suggested public term",
+    "known_false_positive_guidance": "The words 'key', 'judge', 'pass', 'gate' in ordinary English are permitted; only the compound/branded patterns listed above are violations."
+  },
+  "lineage_policy": {
+    "document": "LINEAGE.md (repo-internal, linter-excluded)",
+    "purpose": "Records the original vocabulary, the mapping in this file, and why the names existed. Merges the Solomon's Forge / Caleb naming universes into one canonical history. Satisfies improvement item #5.",
+    "rule": "Lineage is culture, not interface. It never leads public documents and is never required reading to evaluate the framework."
+  }
+}
