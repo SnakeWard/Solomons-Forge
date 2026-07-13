@@ -4,7 +4,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const rootDir = path.resolve(__dirname, "../..");
-const lexiconPath = path.join(rootDir, "lexicon.json");
+const defaultLexiconPath = path.join(rootDir, "lexicon.json");
+const lexiconPath = process.argv[2] ? path.resolve(rootDir, process.argv[2]) : defaultLexiconPath;
 
 function toPosixPath(value) {
   return value.split(path.sep).join("/");
@@ -85,16 +86,29 @@ function matchingFiles(policy) {
     .sort((a, b) => a.relativePath.localeCompare(b.relativePath));
 }
 
-function scanFile(file, rules) {
+function applyAllowlist(line, file, allowlist) {
+  if (!allowlist.allowed_files.includes(file.relativePath)) {
+    return line;
+  }
+
+  return allowlist.allowed_strings.reduce(
+    (current, allowedString) => current.split(allowedString).join(""),
+    line,
+  );
+}
+
+function scanFile(file, rules, allowlist) {
   const text = fs.readFileSync(file.fullPath, "utf8");
   const lines = text.split(/\r?\n/);
   const violations = [];
 
   lines.forEach((line, index) => {
+    const scanLine = applyAllowlist(line, file, allowlist);
+
     for (const rule of rules) {
       rule.regex.lastIndex = 0;
 
-      let match = rule.regex.exec(line);
+      let match = rule.regex.exec(scanLine);
       while (match !== null) {
         violations.push({
           file: file.relativePath,
@@ -107,7 +121,7 @@ function scanFile(file, rules) {
           rule.regex.lastIndex += 1;
         }
 
-        match = rule.regex.exec(line);
+        match = rule.regex.exec(scanLine);
       }
     }
   });
@@ -118,8 +132,9 @@ function scanFile(file, rules) {
 function run() {
   const lexicon = readLexicon();
   const rules = collectRules(lexicon);
+  const allowlist = lexicon.brand_allowlist || { allowed_files: [], allowed_strings: [] };
   const files = matchingFiles(lexicon.linter_policy);
-  const violations = files.flatMap((file) => scanFile(file, rules));
+  const violations = files.flatMap((file) => scanFile(file, rules, allowlist));
 
   if (violations.length > 0) {
     for (const violation of violations) {

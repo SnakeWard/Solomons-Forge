@@ -1,7 +1,7 @@
 {
   "name": "forge-framework",
-  "version": "0.3.0",
-  "description": "Governed AI-assisted software construction framework.",
+  "version": "0.4.0",
+  "description": "Solomon's Forge — a governance framework for AI-assisted software construction: handoff contracts, fail-closed validation gates, and attestation logging.",
   "license": "MIT",
   "engines": {
     "node": ">=20"
