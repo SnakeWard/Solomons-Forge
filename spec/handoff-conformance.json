@@ -1,0 +1,38 @@
+{
+  "manifest_version": "1.0.0",
+  "spec": "forge-handoff-contract",
+  "spec_version": "0.1.0",
+  "conformance_levels": {
+    "HC-1": {
+      "description": "Structural: all required sections present and non-empty.",
+      "required_sections": [
+        "## Receiving Actor",
+        "## Context",
+        "## Target Outcome",
+        "## Non-Negotiable Constraints",
+        "## Preservation Map",
+        "## Required Task Steps",
+        "## Forbidden Behaviors",
+        "## Output Format",
+        "## Validation Checklist",
+        "## Failure Recovery",
+        "## Status Declaration"
+      ],
+      "section_rule": "Each required section heading must appear at line start. The content between a heading and the next heading (or end of file) must contain at least one non-whitespace character."
+    },
+    "HC-2": {
+      "description": "Labeled: HC-1, plus mechanical status-label checks.",
+      "inherits": "HC-1",
+      "status_labels": ["real", "simulated", "planned", "unknown"],
+      "status_declaration_rule": "Every list item (line beginning with '-' or '*') inside the Status Declaration section must match the label pattern.",
+      "label_pattern": ":\\s*(real|simulated|planned|unknown)\\b|\\[(real|simulated|planned|unknown)\\]",
+      "context_rule": "The Context section must contain at least one occurrence of the label pattern.",
+      "known_enforcement_gap": "HC-2 as specified requires every behavioral claim in Context to carry a label; mechanically, this validator checks only that labels are used in Context and that all Status Declaration items are labeled. Full claim-level checking requires human or model review. Recorded per INV-11."
+    },
+    "HC-3": {
+      "description": "Validated: HC-2, plus every validation checklist item maps to an executable check with reported output. Not mechanically checkable by this validator; requires acceptance review.",
+      "inherits": "HC-2",
+      "mechanically_checkable": false
+    }
+  }
+}

@@ -15,4 +15,5 @@ jobs:
       - run: npm install
       - run: npm run lint:terms
       - run: npm run lint:spec
+      - run: npm run validate:handoff examples/example-handoff.md
       - run: npm test
