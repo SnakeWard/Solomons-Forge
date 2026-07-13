@@ -1,6 +1,6 @@
 {
   "name": "forge-framework",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Governed AI-assisted software construction framework.",
   "license": "MIT",
   "engines": {
@@ -8,6 +8,7 @@
   },
   "scripts": {
     "lint:terms": "node src/lint/term-leak.js",
+    "lint:spec": "node src/lint/spec-structure.js",
     "test": "node --test"
   }
 }

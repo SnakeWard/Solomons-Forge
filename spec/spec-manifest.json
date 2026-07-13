@@ -1,0 +1,15 @@
+{
+  "manifest_version": "1.0.0",
+  "specs": [
+    {
+      "file": "spec/core-invariants.md",
+      "required_headings": ["# Forge Core Invariants", "## 1. Purpose", "## 2. Scope", "## 3. Invariants", "## 4. Artifact Status Labels", "## 5. Conformance", "## 6. Relationship to Attribution Standards"],
+      "required_metadata": ["**Specification:**", "**Version:**", "**Status:**", "**License:**"]
+    },
+    {
+      "file": "spec/handoff-contract.md",
+      "required_headings": ["# Forge Handoff Contract", "## 1. Purpose", "## 2. Terminology", "## 3. Contract Requirements", "## 4. Conformance Levels", "## 5. Lifecycle", "## 6. Relationship to Attribution Standards", "## 7. Security Considerations"],
+      "required_metadata": ["**Specification:**", "**Version:**", "**Status:**", "**License:**"]
+    }
+  ]
+}
