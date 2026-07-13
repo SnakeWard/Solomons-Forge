@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.5.0] - Unreleased
+
+- Added getting-started guide.
+- Added copyable HC-2 template.
+- Added second worked example for reviewer role.
+- CI validates all three handoff documents.
+
 ## [0.4.0] - Unreleased
 
 - Added brand admission via scoped allowlist.

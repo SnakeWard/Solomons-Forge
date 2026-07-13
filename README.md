@@ -16,6 +16,8 @@ Run `npm run validate:handoff examples/example-handoff.md` to validate a handoff
 HC-1 checks required sections and non-empty content.
 HC-2 adds status-label checks for context and status declaration lists.
 See `spec/handoff-contract.md` for the contract.
+New here? Start with [docs/getting-started.md](docs/getting-started.md).
+Copy [docs/handoff-template.md](docs/handoff-template.md) to write your own.
 
 ## Vocabulary policy
 
