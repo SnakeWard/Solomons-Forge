@@ -1,6 +1,6 @@
 {
   "$schema_note": "Forge Lexicon v1.0.3 — canonical mapping from internal (lineage) vocabulary to public-surface vocabulary. Consumed by: translation passes, term-leak linter, lineage document. This file is itself a public artifact; it contains no secrets, only naming policy.",
-  "lexicon_version": "1.0.3",
+  "lexicon_version": "1.0.4",
   "status": "locked",
   "locked_by_pass": "PASS_4_BRAND_ADMISSION",
   "brand": {
@@ -191,10 +191,10 @@
   "linter_policy": {
     "applies_to_scope": "public_surface",
     "file_globs": ["**"],
-    "excluded_paths": ["LINEAGE.md", "lexicon.json", "internal/**", "node_modules/**", ".git/**", "package-lock.json"],
+    "excluded_paths": ["LINEAGE.md", "lexicon.json", "internal/**", "node_modules/**", ".git/**", "package-lock.json", "docs/case-study-gates.md"],
     "match_mode": "regex, word-boundary, case-sensitive as written per pattern",
     "on_hit": "fail CI with file, line, matched pattern, and suggested public term",
-    "policy_note": "v1.0.3 inverts coverage: everything is scanned except narrow exclusions. This closes the recurring class of gap where new directories (.github, test, examples) were silently unscanned.",
+    "policy_note": "v1.0.3 inverts coverage: everything is scanned except narrow exclusions. This closes the recurring class of gap where new directories (.github, test, examples) were silently unscanned. v1.0.4 excludes docs/case-study-gates.md: an incident record that quotes rule violations verbatim as evidence, per the same rationale as LINEAGE.md.",
     "known_false_positive_guidance": "The words 'key', 'judge', 'pass', 'gate' in ordinary English are permitted; only the compound/branded patterns listed above are violations."
   },
   "lineage_policy": {

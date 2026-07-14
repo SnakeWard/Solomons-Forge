@@ -4,12 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [0.5.0] - Unreleased
+## [0.5.0] - 2026-07-14
+
+First public release. Versions 0.1.0 through 0.4.0 were pre-publication build increments, published together in the repository's initial history.
 
 - Added getting-started guide.
 - Added copyable HC-2 template.
 - Added second worked example for reviewer role.
 - CI validates all three handoff documents.
+- Added dogfooding case study; lexicon 1.0.4 excludes it as an incident record.
 
 ## [0.4.0] - Unreleased
 
