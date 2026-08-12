@@ -6,6 +6,8 @@
 
 Forge is a framework for governed AI-assisted software construction: structured handoff contracts, fail-closed validation gates, and append-only attestation logging for AI-generated work.
 
+For the evidentiary verifier that checks whether a build kept those contracts, see [the Key repository](https://github.com/SnakeWard/solomons-key).
+
 ## Status
 
 v0.5.0, pre-release. Two draft specifications ([core invariants](spec/core-invariants.md), [handoff contract](spec/handoff-contract.md)) and three working validators with an 11-test suite. Attestation log tooling and a gate runner are planned. For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
