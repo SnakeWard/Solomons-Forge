@@ -2,6 +2,11 @@
   "manifest_version": "1.0.0",
   "specs": [
     {
+      "file": "spec/acceptance-receipt.md",
+      "required_headings": ["# Forge Acceptance Receipt", "## 1. Purpose", "## 2. Input Contract", "## 3. Execution and Binding", "## 4. Receipt and Status", "## 5. Trust Boundary"],
+      "required_metadata": ["**Specification:**", "**Version:**", "**Status:**", "**License:**"]
+    },
+    {
       "file": "spec/core-invariants.md",
       "required_headings": ["# Forge Core Invariants", "## 1. Purpose", "## 2. Scope", "## 3. Invariants", "## 4. Artifact Status Labels", "## 5. Conformance", "## 6. Relationship to Attribution Standards"],
       "required_metadata": ["**Specification:**", "**Version:**", "**Status:**", "**License:**"]

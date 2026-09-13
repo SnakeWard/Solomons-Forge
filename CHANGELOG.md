@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [Unreleased]
+
+- Added a fresh-clone acceptance harness with eight scenarios, preservation comparisons, retained evidence, and CI artifact upload.
+
+- Added acceptance receipt contract and CLI with pinned revision and file hashes.
+- Added explicit check selection, captured output, and per-claim evidence status.
+- Blocked execution on stale or dirty inputs; detect persistent input changes during checks.
+- Added JSON and Markdown receipts that leave final acceptance to the user.
+- Added regression coverage for missing evidence, failed checks, timeouts, output limits, and CLI output handling.
+
 ## [0.5.0] - 2026-07-14
 
 First public release. Versions 0.1.0 through 0.4.0 were pre-publication build increments, published together in the repository's initial history.

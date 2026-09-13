@@ -6,7 +6,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,3 +22,14 @@ jobs:
       - run: npm run validate:handoff examples/review-handoff.md
       - run: npm run validate:handoff docs/handoff-template.md
       - run: npm test
+      - run: npm run test:acceptance -- --out "${{ runner.temp }}/acceptance-results"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: acceptance-results-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/acceptance-results/report.*
+            ${{ runner.temp }}/acceptance-results/*/contract.json
+            ${{ runner.temp }}/acceptance-results/*/invocation.json
+            ${{ runner.temp }}/acceptance-results/*/execution-events.txt
+            ${{ runner.temp }}/acceptance-results/*/receipt/*

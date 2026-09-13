@@ -10,6 +10,8 @@
     "lint:terms": "node src/lint/term-leak.js",
     "lint:spec": "node src/lint/spec-structure.js",
     "validate:handoff": "node src/validate/handoff.js",
+    "receipt:acceptance": "node src/receipt/acceptance.js",
+    "test:acceptance": "node harness/acceptance/run.js",
     "test": "node --test --test-concurrency=1"
   }
 }

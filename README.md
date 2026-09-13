@@ -10,7 +10,7 @@ For the evidentiary verifier that checks whether a build kept those contracts, s
 
 ## Status
 
-v0.5.0, pre-release. Two draft specifications ([core invariants](spec/core-invariants.md), [handoff contract](spec/handoff-contract.md)) and three working validators with an 11-test suite. Attestation log tooling and a gate runner are planned. For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
+v0.5.0, pre-release, with an unreleased [acceptance receipt](spec/acceptance-receipt.md) implementation. Three draft specifications, three validators, and a receiver-selected check runner are covered by the test suite. Append-only attestation tooling and a general gate runner remain planned. For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
 
 ## Usage
 
@@ -20,6 +20,18 @@ HC-2 adds status-label checks for context and status declaration lists.
 See `spec/handoff-contract.md` for the contract.
 New here? Start with [docs/getting-started.md](docs/getting-started.md).
 Copy [docs/handoff-template.md](docs/handoff-template.md) to write your own.
+
+To check received work against a pinned commit and file hashes, use
+`npm run receipt:acceptance -- --repo PATH --contract FILE --out NEW_DIRECTORY`.
+Checks run only when selected with `--run-check ID`. The JSON and Markdown receipt
+records verified, disputed, and unchecked claims; final acceptance remains with
+the user. Start with the [acceptance receipt guide](docs/acceptance-receipt.md).
+
+## Workflow tests
+
+Run `npm run test:acceptance` for the [acceptance workflow harness](harness/acceptance/README.md).
+It tests fresh receiver clones, stale inputs, and preservation regressions, and
+writes receipts plus an expected-versus-actual report outside the checkout.
 
 ## Vocabulary policy
 

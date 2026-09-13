@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "repository": {
+    "revision": "0000000000000000000000000000000000000000"
+  },
+  "handoff": {
+    "path": "handoff.md",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "files": [
+    {
+      "path": "test/login.test.js",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "checks": [
+    {
+      "id": "login-baseline",
+      "command": "node",
+      "args": ["--test", "test/login.test.js"],
+      "timeoutMs": 10000
+    }
+  ],
+  "claims": [
+    {
+      "id": "login-test-passes",
+      "text": "The existing login regression test passes at the pinned revision.",
+      "checks": ["login-baseline"]
+    }
+  ]
+}
