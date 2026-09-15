@@ -226,4 +226,4 @@ if (require.main === module) {
   catch (error) { console.error(`acceptance-receipt: ${error.message}`); process.exitCode = 2; }
 }
 
-module.exports = { createReceipt, validateContract, markdown, sha256, main };
+module.exports = { createReceipt, validateContract, markdown, sha256, main, git, inside, snapshot };

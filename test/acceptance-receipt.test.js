@@ -7,6 +7,74 @@ const test = require("node:test");
 const { createReceipt, validateContract, sha256, markdown } = require("../src/receipt/acceptance");
 
 const cli = path.resolve(__dirname, "../src/receipt/acceptance.js");
+const { bindContract } = require("../src/contract/bind");
+const bindCli = path.resolve(__dirname, "../src/contract/bind.js");
+
+test("automatic binding fills drafts and round-trips through receiver checks", (t) => {
+  const { repo, contract } = fixture(t);
+  const draft = structuredClone(contract);
+  delete draft.repository;
+  for (const file of [draft.handoff, ...draft.files]) delete file.sha256;
+  const contractBytes = Buffer.from(JSON.stringify(draft));
+  const bound = bindContract({ repo, contractBytes });
+  assert.deepEqual(bound, contract);
+  assert.deepEqual(JSON.parse(contractBytes), draft);
+  const receipt = createReceipt({ repo, contractBytes: Buffer.from(JSON.stringify(bound)), runChecks: ["baseline"] });
+  assert.equal(receipt.status, "verified");
+  assert.equal(receipt.acceptance, "pending-user-review");
+});
+
+test("binding refreshes stale values without executing declared commands", (t) => {
+  const { repo, contract } = fixture(t);
+  const expectedRevision = contract.repository.revision;
+  contract.repository.revision = "0".repeat(40);
+  contract.handoff.sha256 = "0".repeat(64);
+  contract.checks[0].args = ["-e", "require('node:fs').writeFileSync('executed', 'bad')"];
+  const bound = bindContract({ repo, contractBytes: Buffer.from(JSON.stringify(contract)) });
+  assert.equal(bound.repository.revision, expectedRevision);
+  assert.equal(bound.handoff.sha256, sha256(fs.readFileSync(path.join(repo, "handoff.md"))));
+  assert.deepEqual(bound.checks, contract.checks);
+  assert.deepEqual(bound.claims, contract.claims);
+  assert.equal(fs.existsSync(path.join(repo, "executed")), false);
+});
+
+test("binding rejects dirty trees, missing files and unsafe or invalid drafts", (t) => {
+  const { repo, contract } = fixture(t);
+  const bind = () => bindContract({ repo, contractBytes: Buffer.from(JSON.stringify(contract)) });
+  contract.files[0].path = "../outside";
+  assert.throws(bind, /repository-relative/);
+  contract.files[0].path = "missing.txt";
+  assert.throws(bind, /missing.txt/);
+  contract.files[0].path = "app.txt";
+  contract.claims[0].checks = ["unknown"];
+  assert.throws(bind, /declared check ids/);
+  contract.claims[0].checks = ["baseline"];
+  fs.writeFileSync(path.join(repo, "new.txt"), "untracked");
+  assert.throws(bind, /clean/);
+  fs.unlinkSync(path.join(repo, "new.txt"));
+  fs.writeFileSync(path.join(repo, "app.txt"), "modified");
+  assert.throws(bind, /clean/);
+});
+
+test("binding CLI writes a new external file and refuses overwrite or internal output", (t) => {
+  const { dir, repo, contract } = fixture(t);
+  const draft = path.join(dir, "draft.json");
+  const output = path.join(dir, "bound.json");
+  fs.writeFileSync(draft, JSON.stringify(contract));
+  const run = (out, extra = []) => spawnSync(process.execPath,
+    [bindCli, "--repo", repo, "--contract", draft, "--out", out, ...extra],
+    { encoding: "utf8", windowsHide: true });
+  const result = run(output);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(fs.readFileSync(output)), contract);
+  const bytes = fs.readFileSync(output, "utf8");
+  assert.equal(run(output).status, 2);
+  assert.equal(fs.readFileSync(output, "utf8"), bytes);
+  assert.equal(run(path.join(repo, "bound.json")).status, 2);
+  assert.equal(fs.existsSync(path.join(repo, "bound.json")), false);
+  assert.equal(run(path.join(dir, "bad.json"), ["--run-check", "baseline"]).status, 2);
+  assert.equal(fs.existsSync(path.join(dir, "bad.json")), false);
+});
 function fixture(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "forge-receipt-test-"));
   t.after(() => {

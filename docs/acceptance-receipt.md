@@ -6,7 +6,32 @@ acceptance to the user.
 
 ## Prepare a contract
 
-Start with [the contract example](../examples/acceptance-contract.json). Replace
+Start with [the contract example](../examples/acceptance-contract.json). Edit the
+handoff and file paths, claims, and check definitions for your project, then bind
+the draft automatically from the Forge checkout:
+
+```sh
+npm run contract:bind -- --repo /path/to/received-project --contract /path/to/draft.json --out /path/to/bound-contract.json
+```
+
+The command pins HEAD and hashes the exact bytes of the handoff and every listed
+file. It preserves claims and commands without running checks or inferring coverage.
+Drafts may omit `repository`, `repository.revision`, and file `sha256` values;
+existing valid revisions and hashes are replaced. Other contract fields must
+satisfy the receipt schema. The repository must be clean, including untracked
+files. Binding rejects unreadable files and paths outside the repository, and
+checks that the observed state remains stable across two snapshots.
+
+The output must be a new file outside the repository with an existing parent
+directory. Existing files are never overwritten. Paths passed to the CLI resolve
+from the current directory; binding paths resolve from the repository root.
+Exit code `0` means the contract was written; `2` means invalid input or an
+operational error. Binding does not verify claims or record acceptance. Use the
+generated contract with `receipt:acceptance` below. Keep matching line endings
+between sender and receiver; hashes cover checkout bytes. Concurrent writers
+remain outside the receipt runner's trust boundary.
+
+To prepare bindings manually instead, replace
 the all-zero revision and digests: they are intentional placeholders and will
 dispute a real checkout. Use `git rev-parse HEAD` for the full commit ID. To hash
 a file's exact bytes, run:

@@ -11,6 +11,7 @@
     "lint:spec": "node src/lint/spec-structure.js",
     "validate:handoff": "node src/validate/handoff.js",
     "receipt:acceptance": "node src/receipt/acceptance.js",
+    "contract:bind": "node src/contract/bind.js",
     "test:acceptance": "node harness/acceptance/run.js",
     "test": "node --test --test-concurrency=1"
   }

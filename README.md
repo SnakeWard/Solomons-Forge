@@ -27,6 +27,11 @@ Checks run only when selected with `--run-check ID`. The JSON and Markdown recei
 records verified, disputed, and unchecked claims; final acceptance remains with
 the user. Start with the [acceptance receipt guide](docs/acceptance-receipt.md).
 
+To fill a contract draft's revision and file hashes automatically, use
+`npm run contract:bind -- --repo PATH --contract DRAFT_FILE --out NEW_FILE`.
+The tree must be clean and the output file must be outside the repository.
+Claims and commands are preserved; binding does not run checks.
+
 ## Workflow tests
 
 Run `npm run test:acceptance` for the [acceptance workflow harness](harness/acceptance/README.md).
