@@ -9,8 +9,8 @@ function requireThat(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-function bindContract({ repo, contractBytes }) {
-  const contract = JSON.parse(contractBytes.toString("utf8"));
+function validateDraft(value) {
+  const contract = structuredClone(value);
   // Drafts may omit generated values. Validate everything else before reading paths.
   if (contract && typeof contract === "object") {
     if (contract.repository === undefined) contract.repository = {};
@@ -22,7 +22,11 @@ function bindContract({ repo, contractBytes }) {
       if (file && typeof file === "object" && !Array.isArray(file)) file.sha256 ??= "0".repeat(64);
     }
   }
-  validateContract(contract);
+  return validateContract(contract);
+}
+
+function bindContract({ repo, contractBytes }) {
+  const contract = validateDraft(JSON.parse(contractBytes.toString("utf8")));
   repo = fs.realpathSync(repo);
   requireThat(repo === fs.realpathSync(git(repo, ["rev-parse", "--show-toplevel"])), "--repo must name the repository root");
   const before = snapshot(repo, contract);
@@ -67,4 +71,4 @@ if (require.main === module) {
   catch (error) { console.error(`contract-bind: ${error.message}`); process.exitCode = 2; }
 }
 
-module.exports = { bindContract, main };
+module.exports = { bindContract, validateDraft, main };

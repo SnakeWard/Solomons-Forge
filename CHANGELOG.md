@@ -6,6 +6,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+- Added a VS Code extension preview with live contract diagnostics, binding, receipt inspection, and receiver-selected checks using the shared CLI engine.
+- Added extension worker regression tests, an isolated VS Code host test, and VSIX packaging.
+
 - Added a fresh-clone acceptance harness with eight scenarios, preservation comparisons, retained evidence, and CI artifact upload.
 
 - Added acceptance receipt contract and CLI with pinned revision and file hashes.

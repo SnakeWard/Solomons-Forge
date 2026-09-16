@@ -1,0 +1,63 @@
+{
+  "name": "forge-contracts",
+  "displayName": "Forge Contracts",
+  "description": "Bind handoff contracts and inspect acceptance receipts with explicit check selection.",
+  "version": "0.1.0",
+  "publisher": "SnakeWard",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./src/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onLanguage:json"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Contract validation is available. Binding and receipt operations require a trusted workspace."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Forge requires Git and files on disk."
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "forge.bindContract",
+        "title": "Forge: Bind Contract",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "forge.inspectReceipt",
+        "title": "Forge: Inspect Contract and Create Receipt",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "forge.runChecks",
+        "title": "Forge: Run Selected Checks and Create Receipt",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "forge.validateContract",
+        "title": "Forge: Validate Contract Draft"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.6.0"
+  }
+}

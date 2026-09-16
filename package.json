@@ -13,6 +13,8 @@
     "receipt:acceptance": "node src/receipt/acceptance.js",
     "contract:bind": "node src/contract/bind.js",
     "test:acceptance": "node harness/acceptance/run.js",
+    "build:vscode": "node extensions/vscode/scripts/build.js",
+    "pretest": "npm run build:vscode",
     "test": "node --test --test-concurrency=1"
   }
 }

@@ -32,6 +32,11 @@ To fill a contract draft's revision and file hashes automatically, use
 The tree must be clean and the output file must be outside the repository.
 Claims and commands are preserved; binding does not run checks.
 
+The [VS Code extension](extensions/vscode/README.md) adds contract binding,
+live draft validation, receipt inspection, and explicit check selection to the
+editor. Build it with `npm run build:vscode`; packaging instructions are in its
+README.
+
 ## Workflow tests
 
 Run `npm run test:acceptance` for the [acceptance workflow harness](harness/acceptance/README.md).

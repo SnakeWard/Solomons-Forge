@@ -9,6 +9,23 @@ const { createReceipt, validateContract, sha256, markdown } = require("../src/re
 const cli = path.resolve(__dirname, "../src/receipt/acceptance.js");
 const { bindContract } = require("../src/contract/bind");
 const bindCli = path.resolve(__dirname, "../src/contract/bind.js");
+const { runWorker } = require("../extensions/vscode/src/controller");
+
+test("extension worker binds and writes receipts with the shared engine", async (t) => {
+  const { dir, repo, contract } = fixture(t);
+  const bound = await runWorker({ operation: "bind", repo, contractText: JSON.stringify(contract), output: path.join(dir, "bound.json") });
+  const contractText = fs.readFileSync(bound.file, "utf8");
+  assert.deepEqual(JSON.parse(contractText), contract);
+  const inspected = await runWorker({ operation: "inspect", repo, contractText, output: path.join(dir, "inspection") });
+  assert.equal(inspected.status, "unchecked");
+  const checked = await runWorker({ operation: "run", repo, contractText, output: path.join(dir, "checked"), runChecks: ["baseline"] });
+  assert.equal(checked.status, "verified");
+  assert.equal(checked.acceptance, "pending-user-review");
+  assert.equal(JSON.parse(fs.readFileSync(path.join(dir, "checked", "receipt.json"))).status, "verified");
+  await assert.rejects(runWorker({ operation: "run", repo, contractText, output: path.join(dir, "checked"), runChecks: ["baseline"] }), /EEXIST/);
+  await assert.rejects(runWorker({ operation: "inspect", repo, contractText, output: path.join(repo, "receipt") }), /outside/);
+  await assert.rejects(runWorker({ operation: "inspect", repo, contractText, output: path.join(dir, "invalid"), runChecks: ["baseline"] }), /cannot execute/);
+});
 
 test("automatic binding fills drafts and round-trips through receiver checks", (t) => {
   const { repo, contract } = fixture(t);
