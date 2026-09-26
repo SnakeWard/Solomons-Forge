@@ -7,7 +7,7 @@ const { createController } = require("../extensions/vscode/src/controller");
 const { validateDraft } = require("../src/contract/bind");
 
 function fixture(t, { trusted = true, selection = true, confirmed = true } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "forge-editor-test-"));
+  const dir = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "forge-editor-test-"));
   t.after(() => {
     assert.equal(path.dirname(dir), fs.realpathSync(os.tmpdir()));
     assert.ok(path.basename(dir).startsWith("forge-editor-test-"));

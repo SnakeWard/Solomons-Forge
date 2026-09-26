@@ -6,13 +6,20 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
-- Added the 1.0 roadmap protocol: five HC-2 milestone handoffs (0.6.0 to 1.0.0), validated in CI. Gate decisions and the attestation log are assigned to the Key verification layer rather than rebuilt in Forge. Added joint beta tracks for the Marketplace extension, Key 0.11.0b1, and the studio site.
+## [0.6.0] - 2026-09-26
 
+- Removed the duplicate getting-started guide.
+- Lexicon 1.0.5: the Key name now names the Key verifier, Forge's verification layer, instead of a reserved name. Key's name and its attestation log command name are admitted through the brand allowlist, and Forge files do not use Key's contract file suffix.
+- Rewrote LINEAGE.md as a full vocabulary mapping table.
+- Added SECURITY.md (private reporting to security@littlerevelationsstudio.com; the check runner is not a sandbox) and CONTRIBUTING.md.
+- Added a Two layers section, credits, and contributing and security links to the README.
+- Credited Pat Little as creator and Little Revelations Studio as publisher in LICENSE, package.json, and README.
+- CI now runs on macOS as well as Linux and Windows. Two test fixtures now create temporary directories under the resolved temporary path, so their cleanup guard holds where the temporary directory is a symlink (as on macOS).
+- Documented why the extension packaging job uses Node 22.
+- Added the roadmap protocol in docs/roadmap: eight HC-2 handoffs covering Forge 0.6.0 to 1.0.0, the Marketplace extension, Key 0.11.0b1, and the studio site, all validated in CI. Gate decisions and the attestation log are assigned to the Key verification layer rather than rebuilt in Forge.
 - Added a VS Code extension preview with live contract diagnostics, binding, receipt inspection, and receiver-selected checks using the shared CLI engine.
 - Added extension worker regression tests, an isolated VS Code host test, and VSIX packaging.
-
 - Added a fresh-clone acceptance harness with eight scenarios, preservation comparisons, retained evidence, and CI artifact upload.
-
 - Added acceptance receipt contract and CLI with pinned revision and file hashes.
 - Added explicit check selection, captured output, and per-claim evidence status.
 - Blocked execution on stale or dirty inputs; detect persistent input changes during checks.

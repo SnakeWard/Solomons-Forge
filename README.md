@@ -6,11 +6,24 @@
 
 Forge is a framework for governed AI-assisted software construction: structured handoff contracts, fail-closed validation gates, and append-only attestation logging for AI-generated work.
 
-For the evidentiary verifier that checks whether a build kept those contracts, see [the Key repository](https://github.com/SnakeWard/solomons-key).
+For the evidentiary verifier that checks whether a build kept those contracts, see [Solomon's Key](https://github.com/SnakeWard/solomons-key).
+
+## Two layers
+
+Forge is one half of a two-repository system.
+
+| Layer | Repository | Responsibility |
+|---|---|---|
+| Construction | Forge (this repository, JavaScript) | Core invariants, handoff contract, acceptance contracts and receipts, authoring tools, editor extension |
+| Verification | [Key](https://github.com/SnakeWard/solomons-key) (Python) | Governance contracts, gate decisions, append-only attestation log (`sk-ledger`), run conformance, trusted-program pinning, tree pinning |
+
+Forge states what must be built and how a handoff is accepted. Key checks
+whether a recorded build kept its contract. Forge works without Key installed;
+Key adds run verification.
 
 ## Status
 
-v0.5.0, pre-release, with an unreleased [acceptance receipt](spec/acceptance-receipt.md) implementation. Three draft specifications, three validators, and a receiver-selected check runner are covered by the test suite. Append-only attestation tooling and a general gate runner remain planned. The path to 1.0 is governed by the [roadmap protocol](docs/roadmap/README.md). For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
+v0.6.0, pre-release. Three draft specifications (including the [acceptance receipt](spec/acceptance-receipt.md)), three validators, contract binding, a receiver-selected check runner, and a VS Code extension preview are covered by the test suite on Linux, macOS, and Windows. Gate decisions and the append-only attestation log are provided by Key; the specification of the Forge-to-Key interface is planned for 0.7.0. The path to the joint beta and 1.0 is governed by the [roadmap protocol](docs/roadmap/README.md). For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
 
 ## Usage
 
@@ -47,3 +60,14 @@ writes receipts plus an expected-versus-actual report outside the checkout.
 
 Public terminology is enforced mechanically by the term-leak linter driven by lexicon.json, so repository text and code stay aligned with the locked vocabulary.
 The project brand is admitted as a scoped, versioned exception; see brand_allowlist in lexicon.json.
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities privately as
+described in [SECURITY.md](SECURITY.md).
+
+## Credits
+
+Created by Pat Little. Published by
+[Little Revelations Studio](https://littlerevelationsstudio.com).
+Released under the [MIT License](LICENSE).

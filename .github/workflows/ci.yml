@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
+          # Packaging tools (@vscode/vsce's Azure dependencies, @vscode/test-electron) require Node 22; the runtime package itself supports Node 20.
           node-version: 22
       - run: npm ci --ignore-scripts
         working-directory: extensions/vscode
@@ -22,8 +23,9 @@ jobs:
           path: extensions/vscode/*.vsix
   test:
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
