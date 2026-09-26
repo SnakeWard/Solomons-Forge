@@ -28,7 +28,8 @@ function validateDraft(value) {
 function bindContract({ repo, contractBytes }) {
   const contract = validateDraft(JSON.parse(contractBytes.toString("utf8")));
   repo = fs.realpathSync(repo);
-  requireThat(repo === fs.realpathSync(git(repo, ["rev-parse", "--show-toplevel"])), "--repo must name the repository root");
+  // Compare canonical OS paths: on Windows, Git reports long names while fs.realpathSync keeps 8.3 short names.
+  requireThat(fs.realpathSync.native(repo) === fs.realpathSync.native(git(repo, ["rev-parse", "--show-toplevel"])), "--repo must name the repository root");
   const before = snapshot(repo, contract);
   requireThat(before.worktreeStatus === "", "repository must be clean, including untracked files");
   for (const file of before.files) {

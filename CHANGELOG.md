@@ -16,6 +16,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Credited Pat Little as creator and Little Revelations Studio as publisher in LICENSE, package.json, and README.
 - CI now runs on macOS as well as Linux and Windows. Two test fixtures now create temporary directories under the resolved temporary path, so their cleanup guard holds where the temporary directory is a symlink (as on macOS).
 - Documented why the extension packaging job uses Node 22.
+- Fixed receipt creation and contract binding rejecting valid repositories on Windows when the path contains 8.3 short names (for example the default temporary directory). The repository-root check now compares canonical OS paths. This had kept Windows CI red since 0.5.0.
 - Added the roadmap protocol in docs/roadmap: eight HC-2 handoffs covering Forge 0.6.0 to 1.0.0, the Marketplace extension, Key 0.11.0b1, and the studio site, all validated in CI. Gate decisions and the attestation log are assigned to the Key verification layer rather than rebuilt in Forge.
 - Added a VS Code extension preview with live contract diagnostics, binding, receipt inspection, and receiver-selected checks using the shared CLI engine.
 - Added extension worker regression tests, an isolated VS Code host test, and VSIX packaging.

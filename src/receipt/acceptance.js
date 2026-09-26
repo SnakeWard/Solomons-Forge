@@ -114,8 +114,9 @@ function createReceipt({ repo, contractBytes, runChecks = [] }) {
   const contract = validateContract(JSON.parse(contractBytes.toString("utf8")));
   requireThat(Array.isArray(runChecks) && new Set(runChecks).size === runChecks.length && runChecks.every((id) => contract.checks.some((check) => check.id === id)), "selected check ids must be unique and declared");
   repo = fs.realpathSync(repo);
-  const gitRoot = fs.realpathSync(git(repo, ["rev-parse", "--show-toplevel"]));
-  requireThat(repo === gitRoot, "--repo must name the repository root");
+  // Compare canonical OS paths: on Windows, Git reports long names while fs.realpathSync keeps 8.3 short names.
+  const gitRoot = git(repo, ["rev-parse", "--show-toplevel"]);
+  requireThat(fs.realpathSync.native(repo) === fs.realpathSync.native(gitRoot), "--repo must name the repository root");
   const startedAt = new Date().toISOString();
   const before = snapshot(repo, contract);
   let stable = bindingStatus(before, contract) === "verified";
