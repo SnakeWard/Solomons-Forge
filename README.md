@@ -10,7 +10,7 @@ For the evidentiary verifier that checks whether a build kept those contracts, s
 
 ## Status
 
-v0.5.0, pre-release, with an unreleased [acceptance receipt](spec/acceptance-receipt.md) implementation. Three draft specifications, three validators, and a receiver-selected check runner are covered by the test suite. Append-only attestation tooling and a general gate runner remain planned. For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
+v0.5.0, pre-release, with an unreleased [acceptance receipt](spec/acceptance-receipt.md) implementation. Three draft specifications, three validators, and a receiver-selected check runner are covered by the test suite. Append-only attestation tooling and a general gate runner remain planned. The path to 1.0 is governed by the [roadmap protocol](docs/roadmap/README.md). For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
 
 ## Usage
 

@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+- Added the 1.0 roadmap protocol: five HC-2 milestone handoffs (0.6.0 to 1.0.0), validated in CI.
+
 - Added a VS Code extension preview with live contract diagnostics, binding, receipt inspection, and receiver-selected checks using the shared CLI engine.
 - Added extension worker regression tests, an isolated VS Code host test, and VSIX packaging.
 
