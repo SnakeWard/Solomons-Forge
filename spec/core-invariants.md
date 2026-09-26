@@ -1,7 +1,7 @@
 # Forge Core Invariants
 
 **Specification:** forge-core-invariants
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **License:** MIT
 
@@ -24,9 +24,13 @@ the failure modes that follow from that asymmetry.
 
 These invariants apply to any actor — human or AI — producing, modifying, or
 transferring software artifacts under the Forge framework. They are
-model-agnostic and tool-agnostic. Companion specifications (the handoff
-contract, gate definitions, attestation log format) define mechanical
-enforcement for specific workflows; this document defines what they enforce.
+model-agnostic and tool-agnostic. Companion specifications define
+mechanical enforcement for specific workflows; this document defines what
+they enforce. The handoff contract and the acceptance receipt are Forge
+specifications. Gate decisions and the attestation log are provided by the
+Key verifier, Forge's verification layer, through the Forge verification
+interface specification, which also assigns each invariant to Forge, Key, or
+both.
 
 ## 3. Invariants
 

@@ -150,7 +150,19 @@ These are changes Forge needs from Key. The Key handoff covers them.
   Forge 0.9.0 can pin it.
 - **Native evidence for acceptance receipts.** Until Key can read a receipt
   directly, Forge passes receipt results to Key through Key's exit-code
-  adapter (0.7.0 defines this mapping).
+  adapter (0.7.0 defines this mapping). That adapter's input digest covers
+  only the exit code, so the receipt's identity travels in the attested
+  decision.
+- **Run manifest for adapter runs.** Key v0.10.1 has no command that writes
+  run.json for a run built from adapter output, so Forge's workflow writes it.
+- **Recording attested decisions.** Key v0.10.1 has no command that records
+  a person's gate decision, so Forge's workflow writes it in the shape Key's
+  own tools produce.
+- **Attestation log actors.** The log's actor field accepts a fixed set of
+  named actors.
+- **Release record.** The v0.10.1 tag points at a different commit from the
+  one in the v0.10.1 row of Key's RELEASES.md. The tarball's SHA-256 matches
+  that row, so Forge pins the tarball rather than the tag.
 
 ## Deferred past 1.0
 
