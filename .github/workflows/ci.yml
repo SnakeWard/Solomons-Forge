@@ -39,7 +39,10 @@ jobs:
       - run: npm run validate:handoff docs/roadmap/0.6-cleanup.md
       - run: npm run validate:handoff docs/roadmap/0.7-verification-boundary.md
       - run: npm run validate:handoff docs/roadmap/0.8-key-dogfood.md
-      - run: npm run validate:handoff docs/roadmap/0.9-release-candidate.md
+      - run: npm run validate:handoff docs/roadmap/0.9-beta.md
+      - run: npm run validate:handoff docs/roadmap/ext-0.9-marketplace.md
+      - run: npm run validate:handoff docs/roadmap/key-0.11-beta.md
+      - run: npm run validate:handoff docs/roadmap/site-studio.md
       - run: npm run validate:handoff docs/roadmap/1.0-release.md
       - run: npm test
       - run: npm run test:acceptance -- --out "${{ runner.temp }}/acceptance-results"
