@@ -37,8 +37,8 @@ jobs:
       - run: npm run validate:handoff examples/review-handoff.md
       - run: npm run validate:handoff docs/handoff-template.md
       - run: npm run validate:handoff docs/roadmap/0.6-cleanup.md
-      - run: npm run validate:handoff docs/roadmap/0.7-gates.md
-      - run: npm run validate:handoff docs/roadmap/0.8-attestation.md
+      - run: npm run validate:handoff docs/roadmap/0.7-verification-boundary.md
+      - run: npm run validate:handoff docs/roadmap/0.8-key-dogfood.md
       - run: npm run validate:handoff docs/roadmap/0.9-release-candidate.md
       - run: npm run validate:handoff docs/roadmap/1.0-release.md
       - run: npm test
