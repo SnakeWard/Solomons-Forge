@@ -24,7 +24,7 @@ assigns each duty to a layer and maps each Forge check to a Key gate.
 
 ## Status
 
-v0.7.0, pre-release. Four draft specifications (including the [acceptance receipt](spec/acceptance-receipt.md) and the [verification interface](spec/verification-interface.md)), three validators, contract binding, a receiver-selected check runner, and a VS Code extension preview are covered by the test suite on Linux, macOS, and Windows. Gate decisions and the append-only attestation log are provided by Key; the verification interface defines how Forge results become Key evidence. Running Forge's own CI through Key is planned for 0.8.0. The path to the joint beta and 1.0 is governed by the [roadmap protocol](docs/roadmap/README.md). For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
+v0.8.0, pre-release. Four draft specifications (including the [acceptance receipt](spec/acceptance-receipt.md) and the [verification interface](spec/verification-interface.md)), three validators, contract binding, a receiver-selected check runner, and a VS Code extension preview are covered by the test suite on Linux, macOS, and Windows. Gate decisions and the append-only attestation log are provided by Key; the verification interface defines how Forge results become Key evidence, and Forge's own CI is verified by a pinned Key release on every push ([Key integration](docs/key-integration.md)). The path to the joint beta and 1.0 is governed by the [roadmap protocol](docs/roadmap/README.md). For how this repository's gates caught its own author during publication, see [docs/case-study-gates.md](docs/case-study-gates.md).
 
 ## Usage
 

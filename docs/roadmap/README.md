@@ -158,6 +158,10 @@ These are changes Forge needs from Key. The Key handoff covers them.
 - **Recording attested decisions.** Key v0.10.1 has no command that records
   a person's gate decision, so Forge's workflow writes it in the shape Key's
   own tools produce.
+- **Missing allowlist is only a warning.** When the trusted-programs file
+  passed to Key's verifier does not exist, v0.10.1 skips the check and warns
+  instead of failing. Forge's key-verify script refuses to run without its
+  allowlist and fails on any RUN17 finding.
 - **Attestation log actors.** The log's actor field accepts a fixed set of
   named actors.
 - **Release record.** The v0.10.1 tag points at a different commit from the

@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-27
+
+- Forge's own CI is now verified by Key. A new `key-verify` job on Linux, macOS, and Windows installs Key v0.10.1 after checking its SHA-256 and records each of the five `ci` gates with Key's adapters. It writes the run manifest, lints the contract, and verifies the run with Key, failing on any critical or error finding and on any RUN17 finding.
+- Added key/key-contract.yaml (derived with Key's sk_init.py from the job's step names, then split into the `ci` and `acceptance` routes) and trusted-program allowlists pinning the official Node.js v20.20.2 binary for linux-x64, darwin-arm64, and win32-x64.
+- Added scripts/key-verify.js and a gate bypass drill: a run with a removed gate decision must be rejected as RUN06, and an altered release hash must be rejected.
+- Added docs/key-integration.md and test/key-verify.test.js, which check that the spec, contract, script, CI step names, and allowlists agree.
+
 ## [0.7.0] - 2026-09-26
 
 - Added the Forge verification interface specification (spec/verification-interface.md, 0.1.0 Draft). It assigns INV-1 to INV-11 and the gate, attestation log, tree pinning, and run verification duties to Forge, Key, or both. It maps each Forge check to a Key adapter and gate ID on a `ci` route and an `acceptance` route, where the user's acceptance is an attested gate. It specifies fail-closed exit-code handling, the run manifest, and verification, and pins Key v0.10.1 by tarball SHA-256. The mapping was trialled against that release before the spec was written, including a missing-gate run (critical RUN06) and an operational-error run (critical RUN11).
