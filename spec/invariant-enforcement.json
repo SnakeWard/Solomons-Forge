@@ -1,0 +1,107 @@
+{
+  "manifest_version": "1.0.0",
+  "spec": "forge-core-invariants",
+  "spec_version": "0.2.0",
+  "rule": "INV-11: every invariant maps to at least one mechanical check, or its gap is recorded as known debt. 'enforced' names checks that fail when the invariant is violated. 'partial' names checks that cover part of it and records the rest as debt. 'known_debt' names no check and says why.",
+  "check_kinds": {
+    "test": "file::exact test name in the Forge test suite",
+    "conformance": "HC level and rule name in spec/handoff-conformance.json",
+    "key_rule": "Key verifier rule ID at the release pinned in spec/verification-interface.md"
+  },
+  "invariants": [
+    {
+      "id": "INV-1",
+      "title": "Workflow before interface",
+      "status": "known_debt",
+      "checks": [],
+      "debt": "Whether the workflow was understood before interface work is a property of how the work was done. HC-1 requires Target Outcome and Required Task Steps sections, but nothing checks their order against interface work."
+    },
+    {
+      "id": "INV-2",
+      "title": "Schema before surface",
+      "status": "known_debt",
+      "checks": [],
+      "debt": "Construction order leaves no mechanical trace in a handoff, receipt, or Key run record."
+    },
+    {
+      "id": "INV-3",
+      "title": "Function before polish",
+      "status": "known_debt",
+      "checks": [],
+      "debt": "No check detects polish that disguises missing logic. Validation Checklists and receipts check function only where the checklist names it."
+    },
+    {
+      "id": "INV-4",
+      "title": "Preservation before mutation",
+      "status": "enforced",
+      "checks": [
+        { "kind": "test", "ref": "test/handoff-validate.test.js::missing required section fails HC-1", "fails_when": "a handoff omits its Preservation Map" },
+        { "kind": "test", "ref": "test/acceptance-receipt.test.js::modified handoff and missing bound files cannot inherit verification", "fails_when": "a preserved, hash-bound file is changed or removed before acceptance" },
+        { "kind": "test", "ref": "test/acceptance-receipt.test.js::input mutation during a successful command disputes it and blocks later checks", "fails_when": "a check modifies a bound input while it runs" }
+      ]
+    },
+    {
+      "id": "INV-5",
+      "title": "Assumptions are labeled",
+      "status": "partial",
+      "checks": [
+        { "kind": "conformance", "ref": "HC-2::context_rule", "fails_when": "the Context section carries no status label" },
+        { "kind": "test", "ref": "test/handoff-validate.test.js::unlabeled status item fails HC-2 but passes HC-1", "fails_when": "a Status Declaration item has no status label" }
+      ],
+      "debt": "HC-2 checks that labels are used, not that every assumption is stated. The HC-2 known_enforcement_gap in spec/handoff-conformance.json applies."
+    },
+    {
+      "id": "INV-6",
+      "title": "Completion verification",
+      "status": "enforced",
+      "checks": [
+        { "kind": "conformance", "ref": "HC-2::status_declaration_rule", "fails_when": "a component in the Status Declaration is not labeled real, simulated, planned, or unknown" },
+        { "kind": "test", "ref": "test/acceptance-receipt.test.js::failed, unavailable and timed-out checks never verify a claim", "fails_when": "a claim would be reported verified without a passing check" },
+        { "kind": "test", "ref": "test/acceptance-receipt.test.js::empty claim evidence stays unchecked and partial check selection stays unchecked", "fails_when": "a claim without selected evidence would be reported verified" },
+        { "kind": "key_rule", "ref": "RUN11", "fails_when": "a run is recorded as passing while a gate did not pass" }
+      ]
+    },
+    {
+      "id": "INV-7",
+      "title": "Local simulation only where useful",
+      "status": "known_debt",
+      "checks": [],
+      "debt": "The simulated label exists, but nothing detects a simulated service presented as live, and usefulness is a judgment."
+    },
+    {
+      "id": "INV-8",
+      "title": "Model-native adaptation",
+      "status": "known_debt",
+      "checks": [],
+      "debt": "HC-1 requires a Receiving Actor section, but whether instructions are adapted to the receiving system is not mechanically checkable."
+    },
+    {
+      "id": "INV-9",
+      "title": "Handoffs are self-contained",
+      "status": "enforced",
+      "checks": [
+        { "kind": "conformance", "ref": "HC-1::section_rule", "fails_when": "a required section, including the Preservation Map or Validation Checklist, is missing or empty" },
+        { "kind": "test", "ref": "test/handoff-validate.test.js::missing required section fails HC-1", "fails_when": "a handoff omits its Preservation Map (the HC-1 rule covers every required section)" }
+      ]
+    },
+    {
+      "id": "INV-10",
+      "title": "Validation is mandatory",
+      "status": "enforced",
+      "checks": [
+        { "kind": "key_rule", "ref": "RUN06", "fails_when": "a gate the route requires recorded no decision" },
+        { "kind": "key_rule", "ref": "RUN11", "fails_when": "a failing gate is recorded in a passing run" },
+        { "kind": "test", "ref": "test/key-verify.test.js::a run passes only when every ci gate recorded a passing decision", "fails_when": "a missing or failing gate decision would let the run manifest claim pass" },
+        { "kind": "conformance", "ref": "HC-3::checklist_rule", "fails_when": "a Validation Checklist item maps to no executable check" }
+      ]
+    },
+    {
+      "id": "INV-11",
+      "title": "Invariants are enforceable",
+      "status": "enforced",
+      "checks": [
+        { "kind": "test", "ref": "test/invariant-enforcement.test.js::every invariant is mapped once, and every named check exists", "fails_when": "an invariant is missing from this map, or a named check does not exist" }
+      ]
+    }
+  ]
+}

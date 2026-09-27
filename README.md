@@ -28,6 +28,10 @@ v0.8.0, pre-release. Four draft specifications (including the [acceptance receip
 
 ## Usage
 
+Forge installs a `forge` command (`npm install` from a clone or a packed tarball, then
+`npx forge --help`) with `validate`, `bind`, `receipt`, and `lint`. The npm scripts below
+call the same command.
+
 Run `npm run validate:handoff examples/example-handoff.md` to validate a handoff document.
 HC-1 checks required sections and non-empty content.
 HC-2 adds status-label checks for context and status declaration lists.

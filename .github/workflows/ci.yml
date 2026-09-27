@@ -58,6 +58,37 @@ jobs:
             ${{ runner.temp }}/acceptance-results/*/invocation.json
             ${{ runner.temp }}/acceptance-results/*/execution-events.txt
             ${{ runner.temp }}/acceptance-results/*/receipt/*
+  # Installs the packed tarball into an empty project and runs the installed forge command.
+  package-install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm pack --pack-destination "$RUNNER_TEMP"
+      - name: Install into an empty project
+        working-directory: ${{ runner.temp }}
+        run: |
+          mkdir app && cd app
+          npm init -y > /dev/null
+          npm install --no-audit --no-fund "$RUNNER_TEMP"/forge-framework-*.tgz
+      - name: Run the installed forge command
+        working-directory: ${{ runner.temp }}/app
+        run: |
+          npx forge --help | tee help.txt
+          for command in validate bind receipt lint; do grep -q "^  $command " help.txt; done
+          cp "$GITHUB_WORKSPACE/examples/example-handoff.md" "$GITHUB_WORKSPACE/examples/example-handoff.contract.json" .
+          npx forge validate example-handoff.md
+          npx forge validate example-handoff.md --level HC-3 --contract example-handoff.contract.json
+          node -e "const forge = require('forge-framework'); if (typeof forge.createReceipt !== 'function') process.exit(1)"
   # Forge's own CI verified by the Key verifier (spec/verification-interface.md).
   # Step names derive the gate IDs in key/key-contract.yaml; keep them in sync.
   key-verify:

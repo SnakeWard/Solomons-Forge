@@ -3,9 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const rootDir = path.resolve(__dirname, "../..");
-const defaultLexiconPath = path.join(rootDir, "lexicon.json");
-const lexiconPath = process.argv[2] ? path.resolve(rootDir, process.argv[2]) : defaultLexiconPath;
+const packageRoot = path.resolve(__dirname, "../..");
 
 function toPosixPath(value) {
   return value.split(path.sep).join("/");
@@ -37,7 +35,7 @@ function globToRegex(glob) {
   return new RegExp(`${source}$`);
 }
 
-function readLexicon() {
+function readLexicon(lexiconPath) {
   return JSON.parse(fs.readFileSync(lexiconPath, "utf8"));
 }
 
@@ -72,7 +70,7 @@ function walkFiles(dir) {
   return files;
 }
 
-function matchingFiles(policy) {
+function matchingFiles(policy, rootDir) {
   const include = policy.file_globs.map(globToRegex);
   const exclude = policy.excluded_paths.map(globToRegex);
 
@@ -129,11 +127,14 @@ function scanFile(file, rules, allowlist) {
   return violations;
 }
 
-function run() {
-  const lexicon = readLexicon();
+// root is the repository to scan; the lexicon path is resolved against it.
+function main(argv, { root = packageRoot } = {}) {
+  const rootDir = path.resolve(root);
+  const lexiconPath = argv[0] ? path.resolve(rootDir, argv[0]) : path.join(rootDir, "lexicon.json");
+  const lexicon = readLexicon(lexiconPath);
   const rules = collectRules(lexicon);
   const allowlist = lexicon.brand_allowlist || { allowed_files: [], allowed_strings: [] };
-  const files = matchingFiles(lexicon.linter_policy);
+  const files = matchingFiles(lexicon.linter_policy, rootDir);
   const violations = files.flatMap((file) => scanFile(file, rules, allowlist));
 
   if (violations.length > 0) {
@@ -142,11 +143,15 @@ function run() {
         `${violation.file}:${violation.line}: pattern ${violation.pattern} -> ${violation.replacement}`,
       );
     }
-    process.exitCode = 1;
-    return;
+    return 1;
   }
 
   console.log(`term-leak: ${files.length} files scanned, 0 violations`);
+  return 0;
 }
 
-run();
+if (require.main === module) {
+  process.exitCode = main(process.argv.slice(2));
+}
+
+module.exports = { main };

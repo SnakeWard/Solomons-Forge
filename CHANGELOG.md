@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+Work toward 0.9.0 (docs/roadmap/0.9-beta.md), steps 1 to 4. Steps 5 to 10 wait for Key 0.11.0b1 on PyPI.
+
+- HC-3 is now mechanically checkable: `validate --level HC-3 --contract FILE` requires every Validation Checklist item to match a contract claim's text, requires each such claim to reference a check, and checks the handoff digest when the contract names one. The check output part of HC-3 is recorded by the acceptance receipt. Handoff contract 0.2.0 and the conformance manifest state the rules. Added examples/example-handoff.contract.json.
+- Added spec/invariant-enforcement.json, mapping INV-1 to INV-11 to the checks that fail when each is violated: 5 enforced, 1 partial, and 5 recorded as known debt with reasons. A test fails if an invariant is missing or a named test, conformance rule, or Key rule does not exist.
+- Added the `forge` command (validate, bind, receipt, lint) with `bin`, `files`, and `exports` in package.json. Relative paths resolve from the current directory. The npm scripts now call it and keep their names and exit codes. The linters and validator gained a `main(argv, { root })` entry point; running their scripts directly behaves as before.
+- Added a `package-install` CI job on Linux, macOS, and Windows that installs the packed tarball into an empty project and runs the installed `forge`.
+
 ## [0.8.0] - 2026-09-27
 
 - Forge's own CI is now verified by Key. A new `key-verify` job on Linux, macOS, and Windows installs Key v0.10.1 after checking its SHA-256 and records each of the five `ci` gates with Key's exit-code adapter. It writes the run manifest, lints the contract, and verifies the run with Key, failing on any critical or error finding and on any RUN17 finding.

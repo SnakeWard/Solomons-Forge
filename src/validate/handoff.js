@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 
 const rootDir = path.resolve(__dirname, "../..");
 const manifestPath = path.join(rootDir, "spec", "handoff-conformance.json");
@@ -11,12 +12,12 @@ function toPosixPath(value) {
   return value.split(path.sep).join("/");
 }
 
-function displayPath(inputPath, resolvedPath) {
+function displayPath(inputPath, resolvedPath, root) {
   if (!path.isAbsolute(inputPath)) {
     return toPosixPath(inputPath);
   }
 
-  const relativePath = path.relative(rootDir, resolvedPath);
+  const relativePath = path.relative(root, resolvedPath);
   if (!relativePath.startsWith("..")) {
     return toPosixPath(relativePath);
   }
@@ -26,30 +27,44 @@ function displayPath(inputPath, resolvedPath) {
 
 function parseArgs(args, supportedLevels) {
   if (args.length === 0) {
-    return { error: `usage: node src/validate/handoff.js <path-to-handoff.md> [--level ${supportedLevels.join("|")}]` };
+    return { error: `usage: node src/validate/handoff.js <path-to-handoff.md> [--level ${supportedLevels.join("|")}] [--contract CONTRACT_FILE]` };
   }
 
   const result = {
     file: args[0],
     level: defaultLevel,
+    contract: null,
   };
 
   for (let index = 1; index < args.length; index += 1) {
-    if (args[index] !== "--level") {
-      return { error: `unknown argument: ${args[index]}` };
+    const flag = args[index];
+    if (flag !== "--level" && flag !== "--contract") {
+      return { error: `unknown argument: ${flag}` };
     }
 
     const value = args[index + 1];
     if (!value) {
-      return { error: "--level requires a value" };
+      return { error: `${flag} requires a value` };
     }
 
-    result.level = value;
+    if (flag === "--level") {
+      result.level = value;
+    } else {
+      result.contract = value;
+    }
     index += 1;
   }
 
   if (!supportedLevels.includes(result.level)) {
     return { error: `unsupported level: ${result.level}` };
+  }
+
+  if (result.level === "HC-3" && !result.contract) {
+    return { error: "HC-3 requires --contract CONTRACT_FILE" };
+  }
+
+  if (result.level !== "HC-3" && result.contract) {
+    return { error: "--contract applies only to --level HC-3" };
   }
 
   return result;
@@ -145,49 +160,115 @@ function validateHc2(display, lines, manifest, requiredSections) {
   return failures;
 }
 
+const normalizeText = (value) => value.replace(/\s+/g, " ").trim();
+
+// Checklist items start with "- " or "* "; indented lines that follow continue the item.
+function checklistItems(section) {
+  const items = [];
+  section.lines.forEach((line, index) => {
+    const item = line.match(/^\s*[-*]\s+(?:\[[ xX]\]\s+)?(.*)$/);
+    if (item) {
+      items.push({ line: section.start + index + 2, text: item[1] });
+    } else if (items.length > 0 && line.trim().length > 0 && /^\s/.test(line)) {
+      items[items.length - 1].text += ` ${line.trim()}`;
+    }
+  });
+  return items.map((item) => ({ ...item, text: normalizeText(item.text) }));
+}
+
+function validateHc3(display, lines, bytes, contractFile, requiredSections, root) {
+  const failures = [];
+  const { validateDraft } = require("../contract/bind");
+  let raw;
+  let contract;
+
+  try {
+    raw = JSON.parse(fs.readFileSync(path.resolve(root, contractFile), "utf8"));
+    contract = validateDraft(raw);
+  } catch (error) {
+    return [`${display}: contract ${toPosixPath(contractFile)}: ${error.message}`];
+  }
+
+  // A bound contract names the exact handoff bytes; a draft may omit the digest.
+  const digest = raw.handoff && raw.handoff.sha256;
+  if (digest !== undefined) {
+    const actual = crypto.createHash("sha256").update(bytes).digest("hex");
+    if (digest !== actual) {
+      failures.push(`${display}: contract binds a different handoff (sha256 ${digest}, file is ${actual})`);
+    }
+  }
+
+  const heading = requiredSections.find((name) => name === "## Validation Checklist");
+  const section = heading && findSection(lines, heading);
+  const items = section ? checklistItems(section) : [];
+  if (items.length === 0) {
+    failures.push(`${display}: ## Validation Checklist has no items to map`);
+  }
+
+  const claims = new Map(contract.claims.map((claim) => [normalizeText(claim.text), claim]));
+  for (const item of items) {
+    const claim = claims.get(item.text);
+    if (!claim) {
+      failures.push(`${display}:${item.line}: checklist item has no contract claim with the same text: "${item.text}"`);
+    } else if (claim.checks.length === 0) {
+      failures.push(`${display}:${item.line}: claim ${claim.id} maps this checklist item to no check`);
+    }
+  }
+
+  return failures;
+}
+
 function supportedLevels(manifest) {
   return Object.entries(manifest.conformance_levels)
     .filter(([, level]) => level.mechanically_checkable !== false)
     .map(([name]) => name);
 }
 
-function run() {
+// root resolves relative handoff and contract paths; the conformance manifest ships with Forge.
+function main(argv, { root = rootDir } = {}) {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
   const levels = supportedLevels(manifest);
-  const args = parseArgs(process.argv.slice(2), levels);
+  const args = parseArgs(argv, levels);
 
   if (args.error) {
     console.error(args.error);
-    process.exitCode = 1;
-    return;
+    return 1;
   }
 
-  const filePath = path.resolve(rootDir, args.file);
-  const display = displayPath(args.file, filePath);
+  const filePath = path.resolve(root, args.file);
+  const display = displayPath(args.file, filePath, root);
 
   if (!fs.existsSync(filePath)) {
     console.error(`${display}: file not found`);
-    process.exitCode = 1;
-    return;
+    return 1;
   }
 
-  const lines = fs.readFileSync(filePath, "utf8").split(/\r?\n/);
+  const bytes = fs.readFileSync(filePath);
+  const lines = bytes.toString("utf8").split(/\r?\n/);
   const requiredSections = requiredSectionsForLevel(manifest, args.level);
   const failures = validateHc1(display, lines, requiredSections);
 
-  if (args.level === "HC-2") {
+  if (args.level === "HC-2" || args.level === "HC-3") {
     failures.push(...validateHc2(display, lines, manifest, requiredSections));
+  }
+
+  if (args.level === "HC-3") {
+    failures.push(...validateHc3(display, lines, bytes, args.contract, requiredSections, root));
   }
 
   if (failures.length > 0) {
     for (const failure of failures) {
       console.error(failure);
     }
-    process.exitCode = 1;
-    return;
+    return 1;
   }
 
   console.log(`handoff-conformance: ${display} conforms to ${args.level}`);
+  return 0;
 }
 
-run();
+if (require.main === module) {
+  process.exitCode = main(process.argv.slice(2));
+}
+
+module.exports = { main, checklistItems };

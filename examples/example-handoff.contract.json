@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "handoff": { "path": "handoff.md" },
+  "files": [
+    { "path": "src/export.js" },
+    { "path": "src/schema.js" }
+  ],
+  "checks": [
+    { "id": "import-tests", "command": "node", "args": ["--test", "test/import.test.js"], "timeoutMs": 30000 },
+    { "id": "full-suite", "command": "node", "args": ["--test"], "timeoutMs": 60000 },
+    { "id": "malformed-csv", "command": "node", "args": ["--test", "--test-name-pattern", "malformed CSV", "test/import.test.js"], "timeoutMs": 30000 },
+    { "id": "round-trip", "command": "node", "args": ["--test", "--test-name-pattern", "round-trip", "test/import.test.js"], "timeoutMs": 30000 }
+  ],
+  "claims": [
+    { "id": "import-tests-pass", "text": "All tests in test/import.test.js pass.", "checks": ["import-tests"] },
+    { "id": "no-regressions", "text": "All previously passing tests still pass.", "checks": ["full-suite"] },
+    { "id": "malformed-csv-visible", "text": "A malformed CSV produces a visible error, not a crash or silent no-op.", "checks": ["malformed-csv"] },
+    { "id": "round-trip-lossless", "text": "Export-then-import round-trips a sample inventory without data loss.", "checks": ["round-trip"] }
+  ]
+}
