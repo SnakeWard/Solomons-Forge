@@ -1,7 +1,7 @@
 # Forge Verification Interface
 
 **Specification:** forge-verification-interface
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **License:** MIT
 
@@ -66,7 +66,7 @@ match exactly.
 | Term leak linter | `npm run lint:terms` | `exit-code` | `term_lint_gate` | automatic | `ci` |
 | Spec structure | `npm run lint:spec` | `exit-code` | `spec_structure_gate` | automatic | `ci` |
 | Handoff conformance | `npm run validate:handoff FILE`, once per document | `exit-code` | `handoff_conformance_gate` | automatic | `ci` |
-| Unit tests | `node --test --test-concurrency=1 --test-reporter=junit --test-reporter-destination=FILE` | `junit` | `unit_tests_gate` | automatic | `ci` |
+| Unit tests | `node --test --test-concurrency=1` | `exit-code` | `unit_tests_gate` | automatic | `ci` |
 | Acceptance harness | `npm run test:acceptance -- --out DIR` | `exit-code` | `acceptance_harness_gate` | automatic | `ci` |
 | Acceptance receipt | `node src/receipt/acceptance.js ...` | `exit-code` | `acceptance_receipt_gate` | automatic | `acceptance` |
 | User acceptance | (a person) | none | `acceptance_decision_gate` | attested | `acceptance` |
@@ -76,6 +76,15 @@ validates. Its input is the first nonzero exit code among those
 validations, or 0 when all pass. The unit test suite MUST run the
 extension build first (`npm run build:vscode`), as `npm test` does.
 
+The unit test suite MUST be recorded with the `exit-code` adapter, not the
+`junit` adapter. At the pinned release, Key's JUnit adapter counts failures
+only from `failures` and `errors` attributes on `<testsuite>` elements.
+Node's JUnit reporter writes top-level tests as `<testcase>` elements with
+no enclosing `<testsuite>`, so the adapter records a failing Node test run
+as passing. A workflow MAY also write a JUnit report and keep it in the run
+directory as supporting output, but it MUST NOT be the input to the gate
+decision.
+
 ### 3.2 Automatic gates
 
 For each automatic gate, the workflow runs the Forge check, then passes its
@@ -84,8 +93,6 @@ result to Key's adapter:
 ```sh
 python sk_adapt.py exit-code CODE --gate GATE_ID --program node \
   --run-id RUN_ID --route ROUTE --out RUN_DIR/artifacts
-python sk_adapt.py junit FILE --gate unit_tests_gate --program node \
-  --run-id RUN_ID --route ci --out RUN_DIR/artifacts
 ```
 
 - `CODE` MUST be the Forge process's actual exit code. Every nonzero code,
@@ -179,6 +186,11 @@ Known limits at the pinned release, recorded as dependencies on Key:
 - There is no command to record an attested gate decision. The workflow
   writes it in the shape Key's own tools produce for attested decisions.
 - The attestation log's actor field accepts a fixed set of named actors.
+- The JUnit adapter passes any report whose failures are recorded only on
+  `<testcase>` elements, including Node's (section 3.1).
+- When the trusted-programs file passed to the verifier does not exist, the
+  verifier skips the program check and only warns (RUN17). A workflow MUST
+  confirm the file exists and MUST treat any RUN17 finding as a failure.
 
 ## 5. Trust Boundary
 

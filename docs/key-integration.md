@@ -18,7 +18,10 @@ contract. It runs on Linux, macOS, and Windows, alongside the ordinary
 ## What the job proves
 
 - Each of the five `ci` gates ran and recorded a decision, produced by the
-  pinned `node` binary.
+  pinned `node` binary. Every decision comes from the check's exit code.
+  The unit tests also write `junit.xml` into the run directory, but Key's
+  JUnit adapter is not used: at v0.10.1 it records failing Node test runs as
+  passing (spec §3.1).
 - Every decision passed, and Key reports 0 critical and 0 error findings.
 - A run with one gate decision removed is rejected as a gate bypass (RUN06).
 - The Key release is rejected if its SHA-256 differs from the pinned value.

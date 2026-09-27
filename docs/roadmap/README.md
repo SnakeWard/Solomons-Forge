@@ -158,6 +158,11 @@ These are changes Forge needs from Key. The Key handoff covers them.
 - **Recording attested decisions.** Key v0.10.1 has no command that records
   a person's gate decision, so Forge's workflow writes it in the shape Key's
   own tools produce.
+- **JUnit adapter misses Node test failures.** Key v0.10.1 counts failures
+  only from `<testsuite>` attributes, and Node's JUnit report has none for
+  top-level tests, so a failing Node test run is recorded as passing. Forge
+  records unit tests with the exit-code adapter instead. This must be fixed
+  in Key before any user relies on the JUnit adapter.
 - **Missing allowlist is only a warning.** When the trusted-programs file
   passed to Key's verifier does not exist, v0.10.1 skips the check and warns
   instead of failing. Forge's key-verify script refuses to run without its

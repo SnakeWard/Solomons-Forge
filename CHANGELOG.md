@@ -8,9 +8,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [0.8.0] - 2026-09-27
 
-- Forge's own CI is now verified by Key. A new `key-verify` job on Linux, macOS, and Windows installs Key v0.10.1 after checking its SHA-256 and records each of the five `ci` gates with Key's adapters. It writes the run manifest, lints the contract, and verifies the run with Key, failing on any critical or error finding and on any RUN17 finding.
+- Forge's own CI is now verified by Key. A new `key-verify` job on Linux, macOS, and Windows installs Key v0.10.1 after checking its SHA-256 and records each of the five `ci` gates with Key's exit-code adapter. It writes the run manifest, lints the contract, and verifies the run with Key, failing on any critical or error finding and on any RUN17 finding.
 - Added key/key-contract.yaml (derived with Key's sk_init.py from the job's step names, then split into the `ci` and `acceptance` routes) and trusted-program allowlists pinning the official Node.js v20.20.2 binary for linux-x64, darwin-arm64, and win32-x64.
 - Added scripts/key-verify.js and a gate bypass drill: a run with a removed gate decision must be rejected as RUN06, and an altered release hash must be rejected.
+- Verification interface 0.2.0: `unit_tests_gate` now uses the exit-code adapter. Key v0.10.1's JUnit adapter reads failure counts only from `<testsuite>` elements, and Node's JUnit reporter has none for top-level tests, so a failing Node test run was recorded as passing. The first Windows CI run of `key-verify` showed this, and a planted failing test reproduced it. The JUnit report is still kept in the run directory as supporting output. The spec also records that the verifier only warns when the allowlist file is missing.
 - Added docs/key-integration.md and test/key-verify.test.js, which check that the spec, contract, script, CI step names, and allowlists agree.
 
 ## [0.7.0] - 2026-09-26

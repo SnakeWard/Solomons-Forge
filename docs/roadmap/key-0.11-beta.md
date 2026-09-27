@@ -41,22 +41,29 @@ compatibility table, and runs the joint end-to-end workflow in its CI.
 - Preserve: the TestPyPI workflow and its recovery path.
 
 ## Required Task Steps
-1. Attribution: add Pat Little to `authors` in pyproject.toml alongside
+1. Fix the JUnit adapter so it fails closed. It must count `<failure>` and
+   `<error>` elements on every `<testcase>`, including reports with no
+   `<testsuite>` element such as Node's. It must also reject a report with
+   no test cases. Add regression fixtures from Node's JUnit reporter, one
+   passing and one failing.
+2. Fix the verifier so a `--trusted` path that does not exist is an error,
+   not a skipped check with a warning.
+3. Attribution: add Pat Little to `authors` in pyproject.toml alongside
    Little Revelations Studio. Add a Credits section to README.md. Set the
    homepage URL to https://littlerevelationsstudio.com and keep the source
    URL pointing at GitHub.
-2. Add a PyPI job to the publishing workflow for beta and release tags. It
+4. Add a PyPI job to the publishing workflow for beta and release tags. It
    takes the same verified release set as TestPyPI and publishes through a
    separate `pypi` environment that requires maintainer approval.
-3. Vocabulary: agree one mapping with Forge's lexicon for the words the two
+5. Vocabulary: agree one mapping with Forge's lexicon for the words the two
    repositories use differently. Record it in both repositories.
-4. Rename the CI workflow file github_workflows_solomons-key-ci.yml to
+6. Rename the CI workflow file github_workflows_solomons-key-ci.yml to
    ci.yml, and add macos-latest to its matrix.
-5. Add the joint end-to-end workflow as a CI job. It installs Forge from the
+7. Add the joint end-to-end workflow as a CI job. It installs Forge from the
    pinned 0.9.0 tag and runs the same positive and negative runs Forge
    defines in examples/joint-workflow.
-6. Publish the compatibility table matching Forge's docs/compatibility.md.
-7. Set VERSION to 0.11.0b1, cut the release set with Key's tooling, and
+8. Publish the compatibility table matching Forge's docs/compatibility.md.
+9. Set VERSION to 0.11.0b1, cut the release set with Key's tooling, and
    refresh the README's pinned revision and counts.
 
 ## Forbidden Behaviors

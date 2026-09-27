@@ -54,12 +54,23 @@ test("ci gates agree across the spec, the Key contract, the script, and CI step 
   const ciRoute = contract.split("route_id: ci")[1].split("route_id:")[0];
   assert.deepEqual([...ciRoute.matchAll(/- ([a-z_]+_gate)/g)].map((match) => match[1]), CI_GATES);
 
-  const job = workflow.split("  key-verify:")[1];
-  const named = [...job.matchAll(/- name: (.+)\n\s+run: node scripts\/key-verify\.js gate (\S+)/g)];
-  assert.deepEqual(named.map((match) => match[2]), CI_GATES);
-  for (const [, name, gate] of named) {
-    assert.equal(`${name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}_gate`, gate, `step "${name}" does not derive ${gate}`);
+  // Windows checkouts use CRLF line endings; the step names must be found either way.
+  for (const text of [workflow.replace(/\r\n/g, "\n"), workflow.replace(/\r?\n/g, "\r\n")]) {
+    const job = text.split("  key-verify:")[1];
+    const named = [...job.matchAll(/- name: (.+?)\r?\n\s+run: node scripts\/key-verify\.js gate (\S+)/g)];
+    assert.deepEqual(named.map((match) => match[2]), CI_GATES);
+    for (const [, name, gate] of named) {
+      assert.equal(`${name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}_gate`, gate, `step "${name}" does not derive ${gate}`);
+    }
   }
+});
+
+test("no gate decision is taken from Key's JUnit adapter", () => {
+  // Key v0.10.1's JUnit adapter records failing Node test runs as passing (spec 3.1).
+  const rows = spec.split("### 3.1 Gates")[1].split("### 3.2")[0].split(/\r?\n/).filter((line) => /_gate` \|/.test(line));
+  assert.ok(rows.length >= CI_GATES.length);
+  for (const row of rows) assert.doesNotMatch(row, /\| `junit` \|/, row);
+  assert.doesNotMatch(read("scripts/key-verify.js"), /\["junit",/);
 });
 
 test("each runner platform has an allowlist that pins only node", () => {

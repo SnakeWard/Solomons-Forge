@@ -173,10 +173,12 @@ function gate(id) {
   let adapterArgs;
   if (id === "unit_tests_gate") {
     if (run("npm", ["run", "-s", "build:vscode"]) !== 0) fail("extension build failed before unit tests");
+    // Key v0.10.1's JUnit adapter records failing Node test runs as passing (spec 3.1),
+    // so the decision comes from the exit code. The JUnit report is kept as supporting output.
     const report = path.join(runDir, "junit.xml");
-    run(process.execPath, ["--test", "--test-concurrency=1", "--test-reporter=junit", `--test-reporter-destination=${report}`]);
-    if (!fs.existsSync(report)) fail("unit tests produced no JUnit report");
-    adapterArgs = ["junit", report];
+    const code = run(process.execPath, ["--test", "--test-concurrency=1", "--test-reporter=spec", "--test-reporter-destination=stdout",
+      "--test-reporter=junit", `--test-reporter-destination=${report}`]);
+    adapterArgs = ["exit-code", String(code)];
   } else {
     adapterArgs = ["exit-code", String(checkExitCode(id, runDir))];
   }
