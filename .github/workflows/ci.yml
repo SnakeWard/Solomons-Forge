@@ -66,11 +66,14 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      KEY_HOME: ${{ runner.temp }}/key
-      KEY_RUN: ${{ runner.temp }}/key-run
     steps:
       - uses: actions/checkout@v4
+      # The runner context is not available in job-level env, so the paths are set here.
+      - name: Set Key paths
+        shell: bash
+        run: |
+          echo "KEY_HOME=${{ runner.temp }}/key" >> "$GITHUB_ENV"
+          echo "KEY_RUN=${{ runner.temp }}/key-run" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with:
           # Exact version: the trusted-program allowlists in key/ pin this node binary's hash.
