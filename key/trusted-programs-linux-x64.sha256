@@ -1,0 +1,4 @@
+# Trusted programs for Forge's key-verify CI job on linux-x64 (Key RUN17 root of trust).
+# node: official Node.js v20.20.2 binary (bin/node inside node-v20.20.2-linux-x64.tar.gz), whose archive was
+# checked against https://nodejs.org/dist/v20.20.2/SHASUMS256.txt. Review before changing.
+6295488653f0d93b0a157841746fef7e72cc4328cfb60c4bbe0ca2668a836ffd  node

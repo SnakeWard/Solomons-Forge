@@ -1,7 +1,7 @@
 # Forge Handoff Contract
 
 **Specification:** forge-handoff-contract
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Status:** Draft
 **License:** MIT
 
@@ -121,7 +121,10 @@ simulated work as real work.
   Status Declaration carries a status label. Mechanically checkable.
 - **HC-3 (validated)**: HC-2, plus every validation checklist item maps to
   an executable check, and the receiving actor's report includes the output
-  of each. Checkable by the acceptance reviewer.
+  of each. The mapping is mechanically checkable against an acceptance
+  contract whose claims restate the checklist items; the check output is
+  recorded by the acceptance receipt created from that contract. The
+  conformance manifest states the exact rules.
 
 Tools claiming conformance MUST state the level.
 

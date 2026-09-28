@@ -15,6 +15,11 @@
       "file": "spec/handoff-contract.md",
       "required_headings": ["# Forge Handoff Contract", "## 1. Purpose", "## 2. Terminology", "## 3. Contract Requirements", "## 4. Conformance Levels", "## 5. Lifecycle", "## 6. Relationship to Attribution Standards", "## 7. Security Considerations"],
       "required_metadata": ["**Specification:**", "**Version:**", "**Status:**", "**License:**"]
+    },
+    {
+      "file": "spec/verification-interface.md",
+      "required_headings": ["# Forge Verification Interface", "## 1. Purpose", "## 2. Layers and Responsibilities", "## 3. Evidence Mapping", "## 4. Pinning", "## 5. Trust Boundary"],
+      "required_metadata": ["**Specification:**", "**Version:**", "**Status:**", "**License:**"]
     }
   ]
 }

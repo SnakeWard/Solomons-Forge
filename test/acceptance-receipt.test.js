@@ -93,7 +93,7 @@ test("binding CLI writes a new external file and refuses overwrite or internal o
   assert.equal(fs.existsSync(path.join(dir, "bad.json")), false);
 });
 function fixture(t) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "forge-receipt-test-"));
+  const dir = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "forge-receipt-test-"));
   t.after(() => {
     assert.equal(path.dirname(dir), fs.realpathSync(os.tmpdir()));
     assert.ok(path.basename(dir).startsWith("forge-receipt-test-"));

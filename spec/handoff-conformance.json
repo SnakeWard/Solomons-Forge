@@ -1,7 +1,7 @@
 {
   "manifest_version": "1.0.0",
   "spec": "forge-handoff-contract",
-  "spec_version": "0.1.0",
+  "spec_version": "0.2.0",
   "conformance_levels": {
     "HC-1": {
       "description": "Structural: all required sections present and non-empty.",
@@ -30,9 +30,11 @@
       "known_enforcement_gap": "HC-2 as specified requires every behavioral claim in Context to carry a label; mechanically, this validator checks only that labels are used in Context and that all Status Declaration items are labeled. Full claim-level checking requires human or model review. Recorded per INV-11."
     },
     "HC-3": {
-      "description": "Validated: HC-2, plus every validation checklist item maps to an executable check with reported output. Not mechanically checkable by this validator; requires acceptance review.",
+      "description": "Validated: HC-2, plus every Validation Checklist item maps to a claim in an acceptance contract, and each such claim references at least one executable check.",
       "inherits": "HC-2",
-      "mechanically_checkable": false
+      "contract_rule": "Requires --contract CONTRACT_FILE: an acceptance contract or draft that validates under spec/acceptance-receipt.md. If the contract names the handoff's sha256, it must equal the SHA-256 of the handoff file's bytes.",
+      "checklist_rule": "Each list item in the Validation Checklist section, with any '[ ]' or '[x]' marker removed and whitespace collapsed, must equal the text of a contract claim (whitespace collapsed), and that claim must reference at least one declared check.",
+      "report_rule": "The spec also requires the receiving actor's report to include each check's output. That part is recorded by the acceptance receipt created from the same contract, not by this validator."
     }
   }
 }

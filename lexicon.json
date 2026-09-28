@@ -1,18 +1,18 @@
 {
-  "$schema_note": "Forge Lexicon v1.0.3 — canonical mapping from internal (lineage) vocabulary to public-surface vocabulary. Consumed by: translation passes, term-leak linter, lineage document. This file is itself a public artifact; it contains no secrets, only naming policy.",
-  "lexicon_version": "1.0.4",
+  "$schema_note": "Forge Lexicon v1.0.5 — canonical mapping from internal (lineage) vocabulary to public-surface vocabulary. Consumed by: translation passes, term-leak linter, lineage document. This file is itself a public artifact; it contains no secrets, only naming policy.",
+  "lexicon_version": "1.0.5",
   "status": "locked",
-  "locked_by_pass": "PASS_4_BRAND_ADMISSION",
+  "locked_by_pass": "FORGE_0.6.0_CLEANUP",
   "brand": {
     "public_name": "Solomon's Forge",
     "internal_lineage_name": "Solomon's Forge / Solomon's Key",
-    "policy": "The public brand is 'Solomon's Forge', admitted as a scoped exception via brand_allowlist below. The brand is a label, never technical vocabulary: specifications refer to 'the Forge handoff contract', 'Forge core invariants'. The name 'Solomon's Key' is reserved for the future public release of the protocol manifest language and is recorded as reserved in LINEAGE.md.",
+    "policy": "The public brand is 'Solomon's Forge', admitted as a scoped exception via brand_allowlist below. The brand is a label, never technical vocabulary: specifications refer to 'the Forge handoff contract', 'Forge core invariants'. 'Solomon's Key' is the public name of the Key verifier (https://github.com/SnakeWard/solomons-key), Forge's verification layer, published by Little Revelations Studio. Forge may link to it and name it; the full name is admitted only through brand_allowlist, and technical prose uses 'Key'.",
     "rationale": "Evocative brands on rigorously plain engineering are industry-normal (Prometheus, Kafka, Kubernetes). The brand exception is mechanically scoped: the exact string is permitted only in designated files; all other occurrences of the pattern remain violations."
   },
   "brand_allowlist": {
-    "allowed_strings": ["Solomon's Forge"],
-    "allowed_files": ["README.md", "package.json", "LINEAGE.md"],
-    "rule": "In allowed_files only, each exact occurrence of an allowed string is removed from a line before pattern matching. All other matches, in any file, remain violations. The allowlist never applies to spec/**, src/**, examples/**, or test/**."
+    "allowed_strings": ["Solomon's Forge", "Solomon's Key", "sk-ledger"],
+    "allowed_files": ["README.md", "package.json", "LINEAGE.md", "docs/roadmap/README.md"],
+    "rule": "In allowed_files only, each exact occurrence of an allowed string is removed from a line before pattern matching. All other matches, in any file, remain violations. The allowlist never applies to spec/**, src/**, examples/**, or test/**. Since 1.0.5 the allowed strings also include the Key verifier's name and its published attestation log command name (sk-ledger), which contains a word this lexicon otherwise maps; they are exact external identifiers, not Forge vocabulary."
   },
   "scopes": {
     "public_surface": "Everything in the repository except excluded_paths: README, specifications, code identifiers, examples, tests, CI config, package metadata, published docs",
@@ -29,11 +29,11 @@
     },
     {
       "internal_term": "Solomon's Key",
-      "public_term": "Forge protocol specification (current); name reserved for future protocol manifest language release",
-      "status": "reserved",
+      "public_term": "Key (the Key verifier, Forge's verification layer; separate repository)",
+      "status": "external_project",
       "category": "brand",
       "linter_patterns": [],
-      "notes": "Covered by the Solomon pattern above; NOT in the allowlist. The reservation is documented in LINEAGE.md."
+      "notes": "Since 1.0.5 no longer reserved: the name belongs to the Key verifier at https://github.com/SnakeWard/solomons-key. Covered by the Solomon pattern above; the full name is admitted through brand_allowlist in listed files only. Technical prose and specifications say 'Key'."
     },
     {
       "internal_term": "KEY file (Kernel Evolving YAML)",
@@ -41,7 +41,7 @@
       "status": "translate",
       "category": "artifact",
       "linter_patterns": ["\\bKEY file\\b", "\\bKernel Evolving YAML\\b", "\\.key\\.yaml\\b"],
-      "notes": "Industry-standard term for a declarative file a runtime validates and executes. File naming convention on public surface: *.manifest.yaml. Bare word 'key' is NOT linted (too common); only the compound forms are."
+      "notes": "Industry-standard term for a declarative file a runtime validates and executes. File naming convention on public surface: *.manifest.yaml. Bare word 'key' is NOT linted (too common); only the compound forms are. Since 1.0.5: the Key verifier names its own contract files with this suffix. That naming lives in the Key repository and is outside this scan. Decision: Forge files do not use the suffix; Forge names its Key contract key-contract.yaml, and the pattern stays active to keep the retired term off Forge's public surface."
     },
     {
       "internal_term": "Logic Engine",
@@ -89,7 +89,7 @@
       "status": "translate",
       "category": "concept",
       "linter_patterns": ["\\bdoctrine\\b", "\\bDoctrine\\b"],
-      "notes": "'Invariant' = a property that must hold at all times. 'Doctrine lock' becomes 'invariant lock'."
+      "notes": "'Invariant' = a property that must hold at all times. 'Doctrine lock' becomes 'invariant lock'. Since 1.0.5: the Key verifier's README uses this word for Forge's core invariants; alignment is tracked as a Key dependency in docs/roadmap/README.md."
     },
     {
       "internal_term": "Ledger",
@@ -97,7 +97,7 @@
       "status": "translate",
       "category": "artifact",
       "linter_patterns": ["\\bledger\\b", "\\bLedger\\b"],
-      "notes": "Deliberately aligned with in-toto/SLSA vocabulary. Retains append-only, PROV-O-mapped semantics."
+      "notes": "Deliberately aligned with in-toto/SLSA vocabulary. Retains append-only, PROV-O-mapped semantics. Since 1.0.5: the Key verifier's command names contain this word; the hyphenated name sk-ledger is admitted through brand_allowlist (the underscore form sk_ledger never matches the pattern). Key's own prose still uses the word; aligning the two vocabularies is tracked as a Key dependency in docs/roadmap/README.md."
     },
     {
       "internal_term": "L.O.T. (Logic Orchestration Table)",
@@ -194,12 +194,12 @@
     "excluded_paths": ["LINEAGE.md", "lexicon.json", "internal/**", "node_modules/**", ".git/**", "package-lock.json", "docs/case-study-gates.md"],
     "match_mode": "regex, word-boundary, case-sensitive as written per pattern",
     "on_hit": "fail CI with file, line, matched pattern, and suggested public term",
-    "policy_note": "v1.0.3 inverts coverage: everything is scanned except narrow exclusions. This closes the recurring class of gap where new directories (.github, test, examples) were silently unscanned. v1.0.4 excludes docs/case-study-gates.md: an incident record that quotes rule violations verbatim as evidence, per the same rationale as LINEAGE.md.",
+    "policy_note": "v1.0.3 inverts coverage: everything is scanned except narrow exclusions. This closes the recurring class of gap where new directories (.github, test, examples) were silently unscanned. v1.0.4 excludes docs/case-study-gates.md: an incident record that quotes rule violations verbatim as evidence, per the same rationale as LINEAGE.md. v1.0.5 records 'Solomon's Key' as the name of the Key verifier (Forge's verification layer) instead of a reserved name, admits that name and Key's attestation log command name sk-ledger through brand_allowlist, extends allowed_files to docs/roadmap/README.md, and records that Forge files do not use the Key contract file suffix.",
     "known_false_positive_guidance": "The words 'key', 'judge', 'pass', 'gate' in ordinary English are permitted; only the compound/branded patterns listed above are violations."
   },
   "lineage_policy": {
     "document": "LINEAGE.md (repo-internal, linter-excluded)",
-    "purpose": "Records the original vocabulary, the mapping in this file, why the names existed, and the reservation of 'Solomon's Key' for the future protocol manifest language release.",
+    "purpose": "Records the original vocabulary, the mapping in this file, why the names existed, and how the Key name moved from reserved to the name of the Key verifier.",
     "rule": "Lineage is culture, not interface. It never leads public documents and is never required reading to evaluate the framework."
   }
 }

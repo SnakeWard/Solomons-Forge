@@ -1,17 +1,41 @@
 {
   "name": "forge-framework",
-  "version": "0.5.0",
+  "version": "0.8.0",
   "description": "Solomon's Forge — a governance framework for AI-assisted software construction: handoff contracts, fail-closed validation gates, and attestation logging.",
+  "author": "Pat Little",
+  "homepage": "https://littlerevelationsstudio.com",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snakeward/solomons-forge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/snakeward/solomons-forge/issues"
+  },
+  "bin": {
+    "forge": "src/cli.js"
+  },
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src/",
+    "spec/",
+    "docs/handoff-template.md",
+    "lexicon.json",
+    "SECURITY.md"
+  ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "lint:terms": "node src/lint/term-leak.js",
-    "lint:spec": "node src/lint/spec-structure.js",
-    "validate:handoff": "node src/validate/handoff.js",
-    "receipt:acceptance": "node src/receipt/acceptance.js",
-    "contract:bind": "node src/contract/bind.js",
+    "lint:terms": "node src/cli.js lint terms",
+    "lint:spec": "node src/cli.js lint spec",
+    "validate:handoff": "node src/cli.js validate",
+    "receipt:acceptance": "node src/cli.js receipt",
+    "contract:bind": "node src/cli.js bind",
     "test:acceptance": "node harness/acceptance/run.js",
     "build:vscode": "node extensions/vscode/scripts/build.js",
     "pretest": "npm run build:vscode",

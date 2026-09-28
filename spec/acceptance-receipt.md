@@ -110,5 +110,6 @@ review. Concurrent writers and malicious programs are outside the trust boundary
 The contract digest and file hashes provide identity, not signatures. Receipts
 are not append-only attestations. Deeper run verification and trusted-program
 policies belong to the separate [Key verifier](https://github.com/SnakeWard/solomons-key).
-This version neither invokes that verifier nor claims compatibility with its run
-format. A future adapter must define and test that mapping explicitly.
+The receipt tool does not invoke Key. How a receipt's result and the user's
+acceptance decision are recorded as Key evidence is defined in the
+[Forge verification interface](verification-interface.md).

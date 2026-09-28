@@ -6,11 +6,44 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+Work toward 0.9.0 (docs/roadmap/0.9-beta.md), steps 1 to 4. Steps 5 to 10 wait for Key 0.11.0b1 on PyPI.
+
+- Rewrote the README around the problem, the two layers, how it works, what makes it different, and a labeled status declaration.
+- HC-3 is now mechanically checkable: `validate --level HC-3 --contract FILE` requires every Validation Checklist item to match a contract claim's text, requires each such claim to reference a check, and checks the handoff digest when the contract names one. The check output part of HC-3 is recorded by the acceptance receipt. Handoff contract 0.2.0 and the conformance manifest state the rules. Added examples/example-handoff.contract.json.
+- Added spec/invariant-enforcement.json, mapping INV-1 to INV-11 to the checks that fail when each is violated: 5 enforced, 1 partial, and 5 recorded as known debt with reasons. A test fails if an invariant is missing or a named test, conformance rule, or Key rule does not exist.
+- Added the `forge` command (validate, bind, receipt, lint) with `bin`, `files`, and `exports` in package.json. Relative paths resolve from the current directory. The npm scripts now call it and keep their names and exit codes. The linters and validator gained a `main(argv, { root })` entry point; running their scripts directly behaves as before.
+- Added a `package-install` CI job on Linux, macOS, and Windows that installs the packed tarball into an empty project and runs the installed `forge`.
+
+## [0.8.0] - 2026-09-27
+
+- Forge's own CI is now verified by Key. A new `key-verify` job on Linux, macOS, and Windows installs Key v0.10.1 after checking its SHA-256 and records each of the five `ci` gates with Key's exit-code adapter. It writes the run manifest, lints the contract, and verifies the run with Key, failing on any critical or error finding and on any RUN17 finding.
+- Added key/key-contract.yaml (derived with Key's sk_init.py from the job's step names, then split into the `ci` and `acceptance` routes) and trusted-program allowlists pinning the official Node.js v20.20.2 binary for linux-x64, darwin-arm64, and win32-x64.
+- Added scripts/key-verify.js and a gate bypass drill: a run with a removed gate decision must be rejected as RUN06, and an altered release hash must be rejected.
+- Verification interface 0.2.0: `unit_tests_gate` now uses the exit-code adapter. Key v0.10.1's JUnit adapter reads failure counts only from `<testsuite>` elements, and Node's JUnit reporter has none for top-level tests, so a failing Node test run was recorded as passing. The first Windows CI run of `key-verify` showed this, and a planted failing test reproduced it. The JUnit report is still kept in the run directory as supporting output. The spec also records that the verifier only warns when the allowlist file is missing.
+- Added docs/key-integration.md and test/key-verify.test.js, which check that the spec, contract, script, CI step names, and allowlists agree.
+
+## [0.7.0] - 2026-09-26
+
+- Added the Forge verification interface specification (spec/verification-interface.md, 0.1.0 Draft). It assigns INV-1 to INV-11 and the gate, attestation log, tree pinning, and run verification duties to Forge, Key, or both. It maps each Forge check to a Key adapter and gate ID on a `ci` route and an `acceptance` route, where the user's acceptance is an attested gate. It specifies fail-closed exit-code handling, the run manifest, and verification, and pins Key v0.10.1 by tarball SHA-256. The mapping was trialled against that release before the spec was written, including a missing-gate run (critical RUN06) and an operational-error run (critical RUN11).
+- Core invariants 0.2.0: §2 now names the Key verifier, through the verification interface, as the provider of gate decisions and the attestation log.
+- Acceptance receipt §5 now links the verification interface instead of a future adapter (wording only; version unchanged).
+- Recorded the Key gaps found during the trial as Key dependencies in the roadmap.
+
+## [0.6.0] - 2026-09-26
+
+- Removed the duplicate getting-started guide.
+- Lexicon 1.0.5: the Key name now names the Key verifier, Forge's verification layer, instead of a reserved name. Key's name and its attestation log command name are admitted through the brand allowlist, and Forge files do not use Key's contract file suffix.
+- Rewrote LINEAGE.md as a full vocabulary mapping table.
+- Added SECURITY.md (private reporting to security@littlerevelationsstudio.com; the check runner is not a sandbox) and CONTRIBUTING.md.
+- Added a Two layers section, credits, and contributing and security links to the README.
+- Credited Pat Little as creator and Little Revelations Studio as publisher in LICENSE, package.json, and README.
+- CI now runs on macOS as well as Linux and Windows. Two test fixtures now create temporary directories under the resolved temporary path, so their cleanup guard holds where the temporary directory is a symlink (as on macOS).
+- Documented why the extension packaging job uses Node 22.
+- Fixed receipt creation and contract binding rejecting valid repositories on Windows when the path contains 8.3 short names (for example the default temporary directory). The repository-root check now compares canonical OS paths. This had kept Windows CI red since 0.5.0.
+- Added the roadmap protocol in docs/roadmap: eight HC-2 handoffs covering Forge 0.6.0 to 1.0.0, the Marketplace extension, Key 0.11.0b1, and the studio site, all validated in CI. Gate decisions and the attestation log are assigned to the Key verification layer rather than rebuilt in Forge.
 - Added a VS Code extension preview with live contract diagnostics, binding, receipt inspection, and receiver-selected checks using the shared CLI engine.
 - Added extension worker regression tests, an isolated VS Code host test, and VSIX packaging.
-
 - Added a fresh-clone acceptance harness with eight scenarios, preservation comparisons, retained evidence, and CI artifact upload.
-
 - Added acceptance receipt contract and CLI with pinned revision and file hashes.
 - Added explicit check selection, captured output, and per-claim evidence status.
 - Blocked execution on stale or dirty inputs; detect persistent input changes during checks.

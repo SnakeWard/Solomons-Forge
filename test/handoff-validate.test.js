@@ -110,3 +110,73 @@ test("nonexistent handoff path reports readable error", () => {
   assert.equal(result.status, 1, output);
   assert.match(output, /file not found/);
 });
+
+const contractRelative = "examples/example-handoff.contract.json";
+
+function hc3Fixture(t, mutate) {
+  const dir = fs.mkdtempSync(path.join(fs.realpathSync(require("node:os").tmpdir()), "forge-hc3-test-"));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const contract = JSON.parse(fs.readFileSync(path.join(rootDir, contractRelative), "utf8"));
+  const handoff = fs.readFileSync(examplePath);
+  mutate?.(contract, handoff);
+  const contractPath = path.join(dir, "contract.json");
+  fs.writeFileSync(contractPath, JSON.stringify(contract));
+  return contractPath;
+}
+
+test("HC-3 passes when every checklist item maps to a claim with a check", () => {
+  const result = runValidator([exampleRelative, "--level", "HC-3", "--contract", contractRelative]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /conforms to HC-3/);
+});
+
+test("HC-3 requires a contract, and a contract requires HC-3", () => {
+  assert.match(runValidator([exampleRelative, "--level", "HC-3"]).stderr, /HC-3 requires --contract/);
+  assert.match(runValidator([exampleRelative, "--contract", contractRelative]).stderr, /--contract applies only to --level HC-3/);
+});
+
+test("HC-3 fails when a checklist item has no matching claim", (t) => {
+  const contractPath = hc3Fixture(t, (contract) => {
+    contract.claims = contract.claims.filter((claim) => claim.id !== "round-trip-lossless");
+  });
+  const result = runValidator([exampleRelative, "--level", "HC-3", "--contract", contractPath]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /no contract claim with the same text: "Export-then-import round-trips/);
+});
+
+test("HC-3 fails when a mapped claim references no check", (t) => {
+  const contractPath = hc3Fixture(t, (contract) => {
+    contract.claims.find((claim) => claim.id === "no-regressions").checks = [];
+  });
+  const result = runValidator([exampleRelative, "--level", "HC-3", "--contract", contractPath]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /claim no-regressions maps this checklist item to no check/);
+});
+
+test("HC-3 checks the handoff digest when the contract names one", (t) => {
+  const bound = hc3Fixture(t, (contract, handoff) => {
+    contract.handoff.sha256 = require("node:crypto").createHash("sha256").update(handoff).digest("hex");
+  });
+  assert.equal(runValidator([exampleRelative, "--level", "HC-3", "--contract", bound]).status, 0);
+
+  const other = hc3Fixture(t, (contract) => {
+    contract.handoff.sha256 = "1".repeat(64);
+  });
+  const result = runValidator([exampleRelative, "--level", "HC-3", "--contract", other]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /contract binds a different handoff/);
+});
+
+test("HC-3 rejects an invalid or missing contract", (t) => {
+  const invalid = hc3Fixture(t, (contract) => {
+    contract.claims = [];
+  });
+  assert.match(runValidator([exampleRelative, "--level", "HC-3", "--contract", invalid]).stderr, /at least one claim required/);
+  assert.match(runValidator([exampleRelative, "--level", "HC-3", "--contract", path.join(rootDir, "missing.json")]).stderr, /contract .*missing\.json/);
+});
+
+test("checklist items join wrapped lines and drop checkbox markers", () => {
+  const { checklistItems } = require("../src/validate/handoff");
+  const items = checklistItems({ start: 0, lines: ["- [ ] First item", "  continues here.", "* [x] Second", "", "not an item"] });
+  assert.deepEqual(items.map((item) => item.text), ["First item continues here.", "Second"]);
+});

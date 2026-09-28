@@ -62,7 +62,7 @@ test("unlisted text fails even when path is listed", () => {
       ...lexicon,
       brand_allowlist: {
         ...lexicon.brand_allowlist,
-        allowed_strings: [allowedString],
+        allowed_strings: lexicon.brand_allowlist.allowed_strings,
         allowed_files: [...lexicon.brand_allowlist.allowed_files, tempRelative],
       },
       linter_policy: {
@@ -83,5 +83,31 @@ test("unlisted text fails even when path is listed", () => {
     assert.deepEqual(violationLines, [`${tempRelative}:2: pattern ${trackedPattern} -> ${lexicon.entries[0].public_term}`]);
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("every allowed string still fails outside listed paths", () => {
+  const tempRelative = "__brand-outside-all.md";
+  const tempPath = path.join(rootDir, tempRelative);
+  const allowedStrings = lexicon.brand_allowlist.allowed_strings;
+
+  try {
+    fs.writeFileSync(tempPath, `${allowedStrings.join("\n")}\n`, "utf8");
+
+    const result = runLint();
+    const output = `${result.stdout}${result.stderr}`;
+    const flaggedLines = new Set(
+      output
+        .split(/\r?\n/)
+        .filter((line) => line.startsWith(`${tempRelative}:`))
+        .map((line) => Number(line.split(":")[1])),
+    );
+
+    assert.equal(result.status, 1, output);
+    allowedStrings.forEach((allowed, index) => {
+      assert.ok(flaggedLines.has(index + 1), `${allowed} was not flagged outside listed paths`);
+    });
+  } finally {
+    fs.rmSync(tempPath, { force: true });
   }
 });

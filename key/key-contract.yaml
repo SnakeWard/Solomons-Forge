@@ -1,0 +1,70 @@
+# Key contract for Forge (spec/verification-interface.md, section 3.1).
+# Derived with Key v0.10.1 sk_init.py from .github/workflows/ci.yml (key-verify
+# job step names), then split into the ci and acceptance routes and given
+# acceptance_receipt_gate, as section 3.1 specifies. Lint with sk_lint.py.
+lot:
+  routes:
+  - route_id: ci
+    required_gates:
+    - term_lint_gate
+    - spec_structure_gate
+    - handoff_conformance_gate
+    - unit_tests_gate
+    - acceptance_harness_gate
+    required_artifacts:
+    - gate_decision_artifact
+  - route_id: acceptance
+    required_gates:
+    - acceptance_receipt_gate
+    - acceptance_decision_gate
+    required_artifacts:
+    - gate_decision_artifact
+gates:
+  gate_entries:
+  - gate_id: term_lint_gate
+    enforcement_class: automatic
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+    program: node
+  - gate_id: spec_structure_gate
+    enforcement_class: automatic
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+    program: node
+  - gate_id: handoff_conformance_gate
+    enforcement_class: automatic
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+    program: node
+  - gate_id: unit_tests_gate
+    enforcement_class: automatic
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+    program: node
+  - gate_id: acceptance_harness_gate
+    enforcement_class: automatic
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+    program: node
+  - gate_id: acceptance_receipt_gate
+    enforcement_class: automatic
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+    program: node
+  - gate_id: acceptance_decision_gate
+    enforcement_class: attested
+    required_evidence:
+    - validation_report_artifact
+    failure_response: block
+artifacts:
+  artifact_entries:
+  - artifact_id: gate_decision_artifact
+    produced_by_role: build
+  - artifact_id: validation_report_artifact
+    produced_by_role: build
