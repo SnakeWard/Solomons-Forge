@@ -6,6 +6,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+- Rewrote the README around the problem, the two layers, how it works, what makes it different, and a labeled status declaration.
+
 Work toward 0.9.0 (docs/roadmap/0.9-beta.md), steps 1 to 4. Steps 5 to 10 wait for Key 0.11.0b1 on PyPI.
 
 - HC-3 is now mechanically checkable: `validate --level HC-3 --contract FILE` requires every Validation Checklist item to match a contract claim's text, requires each such claim to reference a check, and checks the handoff digest when the contract names one. The check output part of HC-3 is recorded by the acceptance receipt. Handoff contract 0.2.0 and the conformance manifest state the rules. Added examples/example-handoff.contract.json.
